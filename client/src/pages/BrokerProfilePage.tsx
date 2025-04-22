@@ -103,7 +103,7 @@ export function BrokerProfilePage() {
           categoria: "Leads respondidos em 1 hora",
           quantidade: brokerPoints.leads_respondidos_1h,
           pontos: brokerPoints.leads_respondidos_1h * 2,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -112,7 +112,7 @@ export function BrokerProfilePage() {
           categoria: "Leads visitados",
           quantidade: brokerPoints.leads_visitados,
           pontos: brokerPoints.leads_visitados * 5,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -121,7 +121,7 @@ export function BrokerProfilePage() {
           categoria: "Propostas enviadas",
           quantidade: brokerPoints.propostas_enviadas,
           pontos: brokerPoints.propostas_enviadas * 8,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -130,7 +130,7 @@ export function BrokerProfilePage() {
           categoria: "Vendas realizadas",
           quantidade: brokerPoints.vendas_realizadas,
           pontos: brokerPoints.vendas_realizadas * 15,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -139,7 +139,7 @@ export function BrokerProfilePage() {
           categoria: "Leads atualizados no mesmo dia",
           quantidade: brokerPoints.leads_atualizados_mesmo_dia,
           pontos: brokerPoints.leads_atualizados_mesmo_dia * 2,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -148,7 +148,7 @@ export function BrokerProfilePage() {
           categoria: "Feedbacks positivos",
           quantidade: brokerPoints.feedbacks_positivos,
           pontos: brokerPoints.feedbacks_positivos * 3,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -157,7 +157,7 @@ export function BrokerProfilePage() {
           categoria: "Resposta rápida (3h)",
           quantidade: brokerPoints.resposta_rapida_3h,
           pontos: brokerPoints.resposta_rapida_3h * 4,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -166,7 +166,7 @@ export function BrokerProfilePage() {
           categoria: "Todos leads respondidos",
           quantidade: brokerPoints.todos_leads_respondidos,
           pontos: brokerPoints.todos_leads_respondidos * 5,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -175,7 +175,7 @@ export function BrokerProfilePage() {
           categoria: "Cadastro completo",
           quantidade: brokerPoints.cadastro_completo,
           pontos: brokerPoints.cadastro_completo * 3,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -184,7 +184,7 @@ export function BrokerProfilePage() {
           categoria: "Acompanhamento pós-venda",
           quantidade: brokerPoints.acompanhamento_pos_venda,
           pontos: brokerPoints.acompanhamento_pos_venda * 10,
-          tipo: "Positivo"
+          tipo: "Positivo",
         });
       }
 
@@ -194,7 +194,7 @@ export function BrokerProfilePage() {
           categoria: "Leads sem interação 24h",
           quantidade: brokerPoints.leads_sem_interacao_24h,
           pontos: brokerPoints.leads_sem_interacao_24h * -3,
-          tipo: "Negativo"
+          tipo: "Negativo",
         });
       }
 
@@ -203,7 +203,7 @@ export function BrokerProfilePage() {
           categoria: "Leads respondidos após 18h",
           quantidade: brokerPoints.leads_respondidos_apos_18h,
           pontos: brokerPoints.leads_respondidos_apos_18h * -2,
-          tipo: "Negativo"
+          tipo: "Negativo",
         });
       }
 
@@ -212,7 +212,7 @@ export function BrokerProfilePage() {
           categoria: "Leads com reclamação",
           quantidade: brokerPoints.leads_com_reclamacao,
           pontos: brokerPoints.leads_com_reclamacao * -4,
-          tipo: "Negativo"
+          tipo: "Negativo",
         });
       }
 
@@ -221,7 +221,7 @@ export function BrokerProfilePage() {
           categoria: "Leads perdidos",
           quantidade: brokerPoints.leads_perdidos,
           pontos: brokerPoints.leads_perdidos * -6,
-          tipo: "Negativo"
+          tipo: "Negativo",
         });
       }
 
@@ -230,7 +230,7 @@ export function BrokerProfilePage() {
           categoria: "Leads com tempo de resposta acima de 12h",
           quantidade: brokerPoints.leads_tempo_resposta_acima_12h,
           pontos: brokerPoints.leads_tempo_resposta_acima_12h * -2,
-          tipo: "Negativo"
+          tipo: "Negativo",
         });
       }
 
@@ -239,22 +239,21 @@ export function BrokerProfilePage() {
           categoria: "Leads sem atualização por 5+ dias",
           quantidade: brokerPoints.leads_5_dias_sem_mudanca,
           pontos: brokerPoints.leads_5_dias_sem_mudanca * -4,
-          tipo: "Negativo"
+          tipo: "Negativo",
         });
       }
 
       // Set the processed points data
       setPointsData(points);
-        const quantity = brokerPoints[key as keyof typeof brokerPoints] ?? 0;
-        if (quantity > 0) {
-          points.push({
-            categoria: rule.name,
-            quantidade: quantity,
-            pontos: quantity * rule.points,
-            tipo: rule.type
-          });
-        }
-      });
+      const quantity = brokerPoints[key as keyof typeof brokerPoints] ?? 0;
+      if (quantity > 0) {
+        points.push({
+          categoria: rule.name,
+          quantidade: quantity,
+          pontos: quantity * rule.points,
+          tipo: rule.type,
+        });
+      }
 
       setPointsData(points);
 
@@ -367,7 +366,8 @@ export function BrokerProfilePage() {
           value={brokerPoints.leads_respondidos_1h || 0}
         />
         <MetricCard
-          title="Leads Visitados"De
+          title="Leads Visitados"
+          De
           value={brokerPoints.leads_visitados || 0}
         />
         <MetricCard
