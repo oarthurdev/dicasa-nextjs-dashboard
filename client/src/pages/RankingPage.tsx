@@ -1,13 +1,33 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BrokerCard } from '@/components/dashboard/BrokerCard';
-import { getBrokerRankings } from '@/lib/supabase';
+import { MetricSummaryCards } from '@/components/dashboard/MetricSummaryCards';
+import { getBrokerRankings, getDashboardMetrics } from '@/lib/supabase';
 
 export function RankingPage() {
-  const { data: brokers, isLoading, error } = useQuery({
+  // Obter rankings dos brokers
+  const { 
+    data: brokers, 
+    isLoading: isLoadingBrokers, 
+    error: brokersError 
+  } = useQuery({
     queryKey: ['brokerRankings'],
     queryFn: getBrokerRankings
   });
+
+  // Obter métricas do dashboard
+  const {
+    data: metrics,
+    isLoading: isLoadingMetrics,
+    error: metricsError
+  } = useQuery({
+    queryKey: ['dashboardMetrics'],
+    queryFn: getDashboardMetrics
+  });
+
+  // Estado de carregamento combinado
+  const isLoading = isLoadingBrokers || isLoadingMetrics;
+  const error = brokersError || metricsError;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -15,6 +35,15 @@ export function RankingPage() {
         <h1 className="text-2xl font-bold text-foreground mb-1">Ranking de Corretores</h1>
         <p className="text-muted-foreground text-sm">Classificação baseada em pontos acumulados por produtividade</p>
       </div>
+
+      {/* Cards de métricas resumidas - mostrar estado de loading se necessário */}
+      <MetricSummaryCards
+        totalLeads={metrics?.totalLeads || 0}
+        activeBrokers={metrics?.activeBrokers || 0}
+        averagePoints={metrics?.averagePoints || 0}
+        totalSales={metrics?.totalSales || 0}
+        isLoading={isLoadingMetrics}
+      />
 
       {isLoading ? (
         <div className="text-center py-10">

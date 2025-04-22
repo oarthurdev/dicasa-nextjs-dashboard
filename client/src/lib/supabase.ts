@@ -223,6 +223,102 @@ export async function getBrokerAlerts(brokerId: number) {
   }
 }
 
+// Funções para obter métricas gerais do dashboard
+export async function getTotalLeads() {
+  try {
+    // Apenas consultar todos e contar o resultado
+    const { data, error } = await supabase
+      .from('leads')
+      .select('id');
+      
+    if (error) throw error;
+    
+    return data?.length || 0;
+  } catch (error) {
+    console.error('Error fetching total leads:', error);
+    return 0;
+  }
+}
+
+export async function getActiveBrokers() {
+  try {
+    // Consultar corretores ativos e contar o resultado
+    const { data, error } = await supabase
+      .from('brokers')
+      .select('id')
+      .eq('ativo', true);
+      
+    if (error) throw error;
+    
+    return data?.length || 0;
+  } catch (error) {
+    console.error('Error fetching active brokers:', error);
+    return 0;
+  }
+}
+
+export async function getAveragePoints() {
+  try {
+    const { data, error } = await supabase
+      .from('broker_points')
+      .select('pontos');
+      
+    if (error) throw error;
+    
+    if (!data || data.length === 0) return 0;
+    
+    const total = data.reduce((sum, broker) => sum + (broker.pontos || 0), 0);
+    return Math.round(total / data.length);
+  } catch (error) {
+    console.error('Error calculating average points:', error);
+    return 0;
+  }
+}
+
+export async function getTotalSales() {
+  try {
+    const { data, error } = await supabase
+      .from('broker_points')
+      .select('vendas_realizadas');
+      
+    if (error) throw error;
+    
+    if (!data) return 0;
+    
+    return data.reduce((sum, broker) => sum + (broker.vendas_realizadas || 0), 0);
+  } catch (error) {
+    console.error('Error calculating total sales:', error);
+    return 0;
+  }
+}
+
+// Função para obter todas as métricas do dashboard de uma só vez
+export async function getDashboardMetrics() {
+  try {
+    const [totalLeads, activeBrokers, averagePoints, totalSales] = await Promise.all([
+      getTotalLeads(),
+      getActiveBrokers(),
+      getAveragePoints(),
+      getTotalSales()
+    ]);
+    
+    return {
+      totalLeads,
+      activeBrokers,
+      averagePoints,
+      totalSales
+    };
+  } catch (error) {
+    console.error('Error fetching dashboard metrics:', error);
+    return {
+      totalLeads: 0,
+      activeBrokers: 0,
+      averagePoints: 0,
+      totalSales: 0
+    };
+  }
+}
+
 // Funções auxiliares para análise de dados
 function generateMonthlyData(_activities: any[], _leads: any[]) {
   // Exemplo simplificado - em produção, você usaria datas reais dos dados
