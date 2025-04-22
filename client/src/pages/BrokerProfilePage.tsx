@@ -293,20 +293,18 @@ export function BrokerProfilePage() {
         />
       </div>
 
-      {/* Funnel e Heatmap */}
+      {/* Funnel, Alerts e Heatmap */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
+        <div className="space-y-6">
           <ConversionFunnel stages={funnelData} />
+          {alerts && <AlertList alerts={alerts} />}
         </div>
         <div>{heatmapData && <HeatMap data={heatmapData} />}</div>
       </div>
 
-      {/* Alertas e Detalhamento de Pontos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>{alerts && <AlertList alerts={alerts} />}</div>
-        <div>
-          {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
-        </div>
+      {/* Detalhamento de Pontos */}
+      <div>
+        {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
       </div>
     </div>
   );
