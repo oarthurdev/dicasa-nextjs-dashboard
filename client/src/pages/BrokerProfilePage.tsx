@@ -303,8 +303,10 @@ export function BrokerProfilePage() {
       </div>
 
       {/* Detalhamento de Pontos */}
-      <div>
-        {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
+        </div>
       </div>
     </div>
   );
