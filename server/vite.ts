@@ -49,13 +49,10 @@ export async function setupVite(app: Express, server: Server) {
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
+    const distDir = path.resolve(__dirname, '..', 'dist');
+
     try {
-      const clientTemplate = path.resolve(
-  	__dirname,
-  	"../../dist/",
-  	"public",
- 	 "index.html"
-	);
+      const clientTemplate = path.resolve(distDir, 'index.html');
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
@@ -73,20 +70,13 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "..", "dist");
+   const distDir = path.resolve(__dirname, '..', 'dist');  // Caminho correto para a pasta 'dist'
 
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`
-    );
-  }
+   app.use(express.static(distDir));  // Serve os arquivos estáticos
 
-  // Serve static files from the 'dist' directory
-  app.use(express.static(distPath));
-
-  // Fall back to index.html for any unmatched route (single page app)
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
-  });
+   // Roteia todas as outras requisições para o arquivo 'index.html' de produção
+   app.get('*', (req, res) => {
+     res.sendFile(path.resolve(distDir, 'index.html'));
+   });
 }
 

@@ -14,7 +14,7 @@ export default defineConfig({
     port: 5173, // ou qualquer outra porta que preferir
   },
   build: {
-    outDir: "../dist", // saída para a raiz do projeto
+    outDir: "dist", // saída para a raiz do projeto
     emptyOutDir: true,
   },
   base: "/",
