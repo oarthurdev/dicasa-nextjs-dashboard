@@ -201,7 +201,7 @@ export async function getBrokerAlerts(brokerId: number) {
 }
 
 // Funções auxiliares para análise de dados
-function generateMonthlyData(activities, leads) {
+function generateMonthlyData(_activities: any[], _leads: any[]) {
   // Exemplo simplificado - em produção, você usaria datas reais dos dados
   return [
     { month: 'Jan', salesAmount: 450000, propertiesSold: 2, points: 45 },
@@ -213,7 +213,7 @@ function generateMonthlyData(activities, leads) {
   ];
 }
 
-function calculatePropertyTypes(leads) {
+function calculatePropertyTypes(_leads: any[]) {
   // Exemplo simplificado - em produção, você extrairia estes dados dos leads
   return [
     { type: 'Apartamento', percentage: 45, count: 9 },

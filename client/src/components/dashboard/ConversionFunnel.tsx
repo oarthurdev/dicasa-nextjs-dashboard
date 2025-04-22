@@ -16,17 +16,17 @@ export function ConversionFunnel({ stages }: ConversionFunnelProps) {
   const maxValue = Math.max(...stages.map(stage => stage.value));
   
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-4">Funil de Conversão</h3>
+    <div className="bg-card p-4 rounded-lg shadow border border-border">
+      <h3 className="text-lg font-semibold mb-4 text-card-foreground">Funil de Conversão</h3>
       
-      <div className="space-y-3">
+      <div className="space-y-4">
         {stages.map((stage, index) => {
           // Calcular a largura relativa para esta etapa
           const widthPercent = maxValue > 0 ? (stage.value / maxValue) * 100 : 0;
           
           return (
             <div key={index} className="relative">
-              <div className="text-sm text-gray-600 mb-1">{stage.name}</div>
+              <div className="text-sm text-muted-foreground mb-1">{stage.name}</div>
               <div 
                 className="h-8 rounded transition-all duration-500 flex items-center justify-start px-3"
                 style={{ 
