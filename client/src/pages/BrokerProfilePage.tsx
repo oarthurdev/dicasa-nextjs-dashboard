@@ -245,17 +245,6 @@ export function BrokerProfilePage() {
 
       // Set the processed points data
       setPointsData(points);
-      const quantity = brokerPoints[key as keyof typeof brokerPoints] ?? 0;
-      if (quantity > 0) {
-        points.push({
-          categoria: rule.name,
-          quantidade: quantity,
-          pontos: quantity * rule.points,
-          tipo: rule.type,
-        });
-      }
-
-      setPointsData(points);
 
       // Criar dados do funil de conversão
       setFunnelData([
