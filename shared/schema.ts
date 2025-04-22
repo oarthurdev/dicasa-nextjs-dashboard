@@ -106,6 +106,7 @@ export const broker_points = pgTable("broker_points", {
   acompanhamento_pos_venda: integer("acompanhamento_pos_venda").default(0),
   leads_sem_interacao_24h: integer("leads_sem_interacao_24h").default(0),
   leads_respondidos_apos_18h: integer("leads_respondidos_apos_18h").default(0),
+  leads_ignorados_48h: integer("leads_ignorados_48h").default(0),
   leads_com_reclamacao: integer("leads_com_reclamacao").default(0),
   leads_perdidos: integer("leads_perdidos").default(0),
   leads_tempo_resposta_acima_12h: integer(

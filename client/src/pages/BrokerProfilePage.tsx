@@ -198,11 +198,11 @@ export function BrokerProfilePage() {
         });
       }
 
-      if (brokerPoints.leads_respondidos_apos_18h > 0) {
+      if (brokerPoints.leads_ignorados_48h > 0) {
         points.push({
-          categoria: "Leads respondidos após 18h",
-          quantidade: brokerPoints.leads_respondidos_apos_18h,
-          pontos: brokerPoints.leads_respondidos_apos_18h * -2,
+          categoria: "Leads ignorados após 48h",
+          quantidade: brokerPoints.leads_ignorados_48h,
+          pontos: brokerPoints.leads_ignorados_48h * -5,
           tipo: "Negativo",
         });
       }
@@ -221,24 +221,6 @@ export function BrokerProfilePage() {
           categoria: "Leads perdidos",
           quantidade: brokerPoints.leads_perdidos,
           pontos: brokerPoints.leads_perdidos * -6,
-          tipo: "Negativo",
-        });
-      }
-
-      if (brokerPoints.leads_tempo_resposta_acima_12h > 0) {
-        points.push({
-          categoria: "Leads com tempo de resposta acima de 12h",
-          quantidade: brokerPoints.leads_tempo_resposta_acima_12h,
-          pontos: brokerPoints.leads_tempo_resposta_acima_12h * -2,
-          tipo: "Negativo",
-        });
-      }
-
-      if (brokerPoints.leads_5_dias_sem_mudanca > 0) {
-        points.push({
-          categoria: "Leads sem atualização por 5+ dias",
-          quantidade: brokerPoints.leads_5_dias_sem_mudanca,
-          pontos: brokerPoints.leads_5_dias_sem_mudanca * -4,
           tipo: "Negativo",
         });
       }
@@ -373,11 +355,11 @@ export function BrokerProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="space-y-6">
           <ConversionFunnel stages={funnelData} />
-          {alerts && <AlertList alerts={alerts} />}
+          {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
         </div>
         <div className="space-y-6">
           {heatmapData && <HeatMap data={heatmapData} />}
-          {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
+          {alerts && <AlertList alerts={alerts} />}
         </div>
       </div>
     </div>

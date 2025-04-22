@@ -67,7 +67,7 @@ export function HeatMap({ data }: HeatMapProps) {
                         className="p-1"
                       >
                         <div 
-                          className="w-full h-8 rounded shadow-sm"
+                          className="w-full h-4 rounded shadow-sm"
                           style={{ 
                             backgroundColor: getColor(value),
                             transition: 'background-color 0.3s ease'

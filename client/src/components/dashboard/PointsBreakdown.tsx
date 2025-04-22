@@ -43,7 +43,7 @@ export function PointsBreakdown({ data }: PointsBreakdownProps) {
         </div>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-2">
         {data.map((item, index) => (
           <div key={index} className="text-sm">
             <div className="flex justify-between items-center mb-1">
@@ -52,7 +52,7 @@ export function PointsBreakdown({ data }: PointsBreakdownProps) {
                 {item.tipo === 'Positivo' ? '+' : ''}{item.pontos}
               </span>
             </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div className="h-1 bg-muted rounded-full overflow-hidden">
               <div 
                 className={`h-full rounded-full ${item.tipo === 'Positivo' ? 'bg-secondary' : 'bg-destructive'}`}
                 style={{ 
