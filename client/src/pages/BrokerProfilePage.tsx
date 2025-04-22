@@ -280,7 +280,7 @@ export function BrokerProfilePage() {
           value={brokerPoints.leads_respondidos_1h || 0}
         />
         <MetricCard
-          title="Leads Visitados"
+          title="Leads Visitados"De
           value={brokerPoints.leads_visitados || 0}
         />
         <MetricCard
