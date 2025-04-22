@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useParams, Link } from 'wouter';
-import { MetricCard } from '@/components/dashboard/MetricCard';
-import { HeatMap } from '@/components/dashboard/HeatMap';
-import { AlertList } from '@/components/dashboard/AlertList';
-import { ConversionFunnel } from '@/components/dashboard/ConversionFunnel';
-import { PointsBreakdown } from '@/components/dashboard/PointsBreakdown';
-import { 
-  getBrokerById, 
-  getBrokerPoints, 
-  getActivityHeatmap, 
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams, Link } from "wouter";
+import { MetricCard } from "@/components/dashboard/MetricCard";
+import { HeatMap } from "@/components/dashboard/HeatMap";
+import { AlertList } from "@/components/dashboard/AlertList";
+import { ConversionFunnel } from "@/components/dashboard/ConversionFunnel";
+import { PointsBreakdown } from "@/components/dashboard/PointsBreakdown";
+import {
+  getBrokerById,
+  getBrokerPoints,
+  getActivityHeatmap,
   getBrokerAlerts,
-  getBrokerRankPosition
-} from '@/lib/supabase';
+  getBrokerRankPosition,
+} from "@/lib/supabase";
 
 interface BrokerPerformance {
   monthlyData: {
@@ -44,157 +44,166 @@ interface PointCategory {
   categoria: string;
   quantidade: number;
   pontos: number;
-  tipo: 'Positivo' | 'Negativo';
+  tipo: "Positivo" | "Negativo";
 }
 
 export function BrokerProfilePage() {
   const { id } = useParams<{ id: string }>();
   const brokerId = parseInt(id);
-  
+
   // Estado para armazenar os dados formatados para o detalhamento de pontos
   const [pointsData, setPointsData] = useState<PointCategory[]>([]);
   // Estado para armazenar os dados formatados para o funil de conversão
-  const [funnelData, setFunnelData] = useState<{ name: string; value: number; color: string }[]>([]);
+  const [funnelData, setFunnelData] = useState<
+    { name: string; value: number; color: string }[]
+  >([]);
 
   // Consultas para buscar os dados do corretor usando Supabase diretamente
   const { data: broker, isLoading: isLoadingBroker } = useQuery({
-    queryKey: ['broker', brokerId],
+    queryKey: ["broker", brokerId],
     queryFn: () => getBrokerById(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
   const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery({
-    queryKey: ['brokerPoints', brokerId],
+    queryKey: ["brokerPoints", brokerId],
     queryFn: () => getBrokerPoints(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
-  const { data: heatmapData, isLoading: isLoadingHeatmap } = useQuery<HeatMapData>({
-    queryKey: ['brokerHeatmap', brokerId],
-    queryFn: () => getActivityHeatmap(brokerId),
-    enabled: !!brokerId && !isNaN(brokerId),
-  });
+  const { data: heatmapData, isLoading: isLoadingHeatmap } =
+    useQuery<HeatMapData>({
+      queryKey: ["brokerHeatmap", brokerId],
+      queryFn: () => getActivityHeatmap(brokerId),
+      enabled: !!brokerId && !isNaN(brokerId),
+    });
 
   const { data: alerts, isLoading: isLoadingAlerts } = useQuery<BrokerAlert[]>({
-    queryKey: ['brokerAlerts', brokerId],
+    queryKey: ["brokerAlerts", brokerId],
     queryFn: () => getBrokerAlerts(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
-  
+
   // Consulta para buscar a posição do broker no ranking
-  const { data: rankPosition, isLoading: isLoadingRankPosition } = useQuery<number>({
-    queryKey: ['brokerRankPosition', brokerId],
-    queryFn: () => getBrokerRankPosition(brokerId),
-    enabled: !!brokerId && !isNaN(brokerId),
-  });
+  const { data: rankPosition, isLoading: isLoadingRankPosition } =
+    useQuery<number>({
+      queryKey: ["brokerRankPosition", brokerId],
+      queryFn: () => getBrokerRankPosition(brokerId),
+      enabled: !!brokerId && !isNaN(brokerId),
+    });
 
   // Efeito para processar os dados de pontuação para o componente PointsBreakdown
   useEffect(() => {
     if (brokerPoints) {
       const points: PointCategory[] = [];
-      
+
       // Adicionar pontos positivos se houver
       const leadsRespondidos = brokerPoints.leads_respondidos_1h ?? 0;
       if (leadsRespondidos > 0) {
         points.push({
-          categoria: 'Leads respondidos em 1h',
+          categoria: "Leads respondidos em 1h",
           quantidade: leadsRespondidos,
           pontos: leadsRespondidos * 2, // 2 pts por lead
-          tipo: 'Positivo'
+          tipo: "Positivo",
         });
       }
-      
+
       const leadsVisitados = brokerPoints.leads_visitados ?? 0;
       if (leadsVisitados > 0) {
         points.push({
-          categoria: 'Leads visitados',
+          categoria: "Leads visitados",
           quantidade: leadsVisitados,
           pontos: leadsVisitados * 5, // 5 pts por visita
-          tipo: 'Positivo'
+          tipo: "Positivo",
         });
       }
-      
+
       const propostasEnviadas = brokerPoints.propostas_enviadas ?? 0;
       if (propostasEnviadas > 0) {
         points.push({
-          categoria: 'Propostas enviadas',
+          categoria: "Propostas enviadas",
           quantidade: propostasEnviadas,
           pontos: propostasEnviadas * 8, // 8 pts por proposta
-          tipo: 'Positivo'
+          tipo: "Positivo",
         });
       }
-      
+
       const vendasRealizadas = brokerPoints.vendas_realizadas ?? 0;
       if (vendasRealizadas > 0) {
         points.push({
-          categoria: 'Vendas realizadas',
+          categoria: "Vendas realizadas",
           quantidade: vendasRealizadas,
           pontos: vendasRealizadas * 15, // 15 pts por venda
-          tipo: 'Positivo'
+          tipo: "Positivo",
         });
       }
-      
+
       // Adicionar pontos negativos se houver
       const leadsSemInteracao = brokerPoints.leads_sem_interacao_24h ?? 0;
       if (leadsSemInteracao > 0) {
         points.push({
-          categoria: 'Leads sem interação 24h',
+          categoria: "Leads sem interação 24h",
           quantidade: leadsSemInteracao,
           pontos: -(leadsSemInteracao * 3), // -3 pts por lead
-          tipo: 'Negativo'
+          tipo: "Negativo",
         });
       }
-      
+
       const leadsRespondidosApos = brokerPoints.leads_respondidos_apos_18h ?? 0;
       if (leadsRespondidosApos > 0) {
         points.push({
-          categoria: 'Leads respondidos após 18h',
+          categoria: "Leads respondidos após 18h",
           quantidade: leadsRespondidosApos,
           pontos: -(leadsRespondidosApos * 2), // -2 pts por lead
-          tipo: 'Negativo'
+          tipo: "Negativo",
         });
       }
-      
+
       const leadsSemMudanca = brokerPoints.leads_5_dias_sem_mudanca ?? 0;
       if (leadsSemMudanca > 0) {
         points.push({
-          categoria: 'Leads 5+ dias sem mudança',
+          categoria: "Leads 5+ dias sem mudança",
           quantidade: leadsSemMudanca,
           pontos: -(leadsSemMudanca * 4), // -4 pts por lead
-          tipo: 'Negativo'
+          tipo: "Negativo",
         });
       }
-      
+
       setPointsData(points);
-      
+
       // Criar dados do funil de conversão
       setFunnelData([
         {
-          name: 'Leads Respondidos em 1h',
+          name: "Leads Respondidos em 1h",
           value: brokerPoints.leads_respondidos_1h || 0,
-          color: '#3B82F6' // azul
+          color: "#3B82F6", // azul
         },
         {
-          name: 'Leads Visitados',
+          name: "Leads Visitados",
           value: brokerPoints.leads_visitados || 0,
-          color: '#10B981' // verde
+          color: "#10B981", // verde
         },
         {
-          name: 'Propostas Enviadas',
+          name: "Propostas Enviadas",
           value: brokerPoints.propostas_enviadas || 0,
-          color: '#F59E0B' // amarelo
+          color: "#F59E0B", // amarelo
         },
         {
-          name: 'Vendas Realizadas',
+          name: "Vendas Realizadas",
           value: brokerPoints.vendas_realizadas || 0,
-          color: '#8B5CF6' // roxo
-        }
+          color: "#8B5CF6", // roxo
+        },
       ]);
     }
   }, [brokerPoints]);
 
   // Verificar se está carregando
-  const isLoading = isLoadingBroker || isLoadingPoints || isLoadingHeatmap || isLoadingAlerts || isLoadingRankPosition;
+  const isLoading =
+    isLoadingBroker ||
+    isLoadingPoints ||
+    isLoadingHeatmap ||
+    isLoadingAlerts ||
+    isLoadingRankPosition;
 
   if (isLoading) {
     return (
@@ -227,60 +236,74 @@ export function BrokerProfilePage() {
       {/* Cabeçalho com navegação */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <Link href="/" className="text-primary hover:text-primary/90 hover:underline flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <Link
+            href="/"
+            className="text-primary hover:text-primary/90 hover:underline flex items-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Voltar para Ranking
           </Link>
-          
-          <h1 className="text-2xl font-bold text-foreground mt-2">{broker.nome}</h1>
+
+          <h1 className="text-2xl font-bold text-foreground mt-2">
+            {broker.nome}
+          </h1>
           <div className="flex items-center mt-1">
             <span className="text-muted-foreground text-sm">Ranking</span>
             <span className="mx-2 font-bold text-primary">#{rankPosition}</span>
             <span className="text-muted-foreground text-sm">Pontuação</span>
-            <span className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? 'text-secondary' : 'text-destructive'}`}>
+            <span
+              className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? "text-secondary" : "text-destructive"}`}
+            >
               {brokerPoints.pontos ?? 0}
             </span>
           </div>
         </div>
       </div>
-      
+
       {/* Métricas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard 
-          title="Leads Respondidos em 1h" 
-          value={brokerPoints.leads_respondidos_1h || 0} 
+        <MetricCard
+          title="Leads Respondidos em 1h"
+          value={brokerPoints.leads_respondidos_1h || 0}
         />
-        <MetricCard 
-          title="Leads Visitados" 
-          value={brokerPoints.leads_visitados || 0} 
+        <MetricCard
+          title="Leads Visitados"
+          value={brokerPoints.leads_visitados || 0}
         />
-        <MetricCard 
-          title="Propostas Enviadas" 
-          value={brokerPoints.propostas_enviadas || 0} 
+        <MetricCard
+          title="Propostas Enviadas"
+          value={brokerPoints.propostas_enviadas || 0}
         />
-        <MetricCard 
-          title="Vendas Realizadas" 
-          value={brokerPoints.vendas_realizadas || 0} 
+        <MetricCard
+          title="Vendas Realizadas"
+          value={brokerPoints.vendas_realizadas || 0}
         />
       </div>
-      
+
       {/* Funnel e Heatmap */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
           <ConversionFunnel stages={funnelData} />
         </div>
-        <div>
-          {heatmapData && <HeatMap data={heatmapData} />}
-        </div>
+        <div>{heatmapData && <HeatMap data={heatmapData} />}</div>
       </div>
-      
+
       {/* Alertas e Detalhamento de Pontos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          {alerts && <AlertList alerts={alerts} />}
-        </div>
+        <div>{alerts && <AlertList alerts={alerts} />}</div>
         <div>
           {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
         </div>
