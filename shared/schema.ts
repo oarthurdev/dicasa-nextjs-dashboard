@@ -1,4 +1,14 @@
-import { pgTable, text, serial, integer, boolean, timestamp, numeric, json, bigint } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  numeric,
+  json,
+  bigint,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -33,7 +43,10 @@ export const insertBrokerSchema = createInsertSchema(brokers).omit({
 export const leads = pgTable("leads", {
   id: bigint("id", { mode: "number" }).primaryKey(),
   nome: text("nome").notNull(),
-  responsavel_id: bigint("responsavel_id", { mode: "number" }).references(() => brokers.id, { onDelete: "set null" }),
+  responsavel_id: bigint("responsavel_id", { mode: "number" }).references(
+    () => brokers.id,
+    { onDelete: "set null" },
+  ),
   contato_nome: text("contato_nome"),
   valor: numeric("valor", { precision: 12, scale: 2 }),
   status_id: bigint("status_id", { mode: "number" }),
@@ -53,8 +66,12 @@ export const insertLeadSchema = createInsertSchema(leads).omit({
 // Tabela de atividades
 export const activities = pgTable("activities", {
   id: text("id").primaryKey(),
-  lead_id: bigint("lead_id", { mode: "number" }).references(() => leads.id, { onDelete: "cascade" }),
-  user_id: bigint("user_id", { mode: "number" }).references(() => brokers.id, { onDelete: "set null" }),
+  lead_id: bigint("lead_id", { mode: "number" }).references(() => leads.id, {
+    onDelete: "cascade",
+  }),
+  user_id: bigint("user_id", { mode: "number" }).references(() => brokers.id, {
+    onDelete: "set null",
+  }),
   tipo: text("tipo"),
   valor_anterior: text("valor_anterior"),
   valor_novo: text("valor_novo"),
@@ -70,18 +87,30 @@ export const insertActivitySchema = createInsertSchema(activities).omit({
 
 // Tabela de pontuação dos corretores
 export const broker_points = pgTable("broker_points", {
-  id: bigint("id", { mode: "number" }).primaryKey().references(() => brokers.id, { onDelete: "cascade" }),
+  id: bigint("id", { mode: "number" })
+    .primaryKey()
+    .references(() => brokers.id, { onDelete: "cascade" }),
   nome: text("nome").notNull(),
   pontos: integer("pontos").default(0),
   leads_respondidos_1h: integer("leads_respondidos_1h").default(0),
   leads_visitados: integer("leads_visitados").default(0),
   propostas_enviadas: integer("propostas_enviadas").default(0),
   vendas_realizadas: integer("vendas_realizadas").default(0),
-  leads_atualizados_mesmo_dia: integer("leads_atualizados_mesmo_dia").default(0),
+  leads_atualizados_mesmo_dia: integer("leads_atualizados_mesmo_dia").default(
+    0,
+  ),
   feedbacks_positivos: integer("feedbacks_positivos").default(0),
+  resposta_rapida_3h: integer("resposta_rapida_3h").default(0),
+  todos_leads_respondidos: integer("todos_leads_respondidos").default(0),
+  cadastro_completo: integer("cadastro_completo").default(0),
+  acompanhamento_pos_venda: integer("acompanhamento_pos_venda").default(0),
   leads_sem_interacao_24h: integer("leads_sem_interacao_24h").default(0),
   leads_respondidos_apos_18h: integer("leads_respondidos_apos_18h").default(0),
-  leads_tempo_resposta_acima_12h: integer("leads_tempo_resposta_acima_12h").default(0),
+  leads_com_reclamacao: integer("leads_com_reclamacao").default(0),
+  leads_perdidos: integer("leads_perdidos").default(0),
+  leads_tempo_resposta_acima_12h: integer(
+    "leads_tempo_resposta_acima_12h",
+  ).default(0),
   leads_5_dias_sem_mudanca: integer("leads_5_dias_sem_mudanca").default(0),
   updated_at: timestamp("updated_at").defaultNow(),
 });
@@ -104,7 +133,7 @@ export const kommo_config = pgTable("kommo_config", {
 
 export const insertKommoConfigSchema = createInsertSchema(kommo_config).omit({
   id: true,
-  created_at: true, 
+  created_at: true,
   updated_at: true,
 });
 
