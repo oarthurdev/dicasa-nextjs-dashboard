@@ -153,13 +153,13 @@ export async function getActivityHeatmap(brokerId: number) {
 
     // Gerar heatmap (apenas para os dias da semana e horário comercial estendido)
     const dias = [
-      "Segunda",
-      "Terça",
-      "Quarta",
-      "Quinta",
-      "Sexta",
-      "Sábado",
-      "Domingo",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
     ];
     // Horários das 8h às 22h (horário comercial estendido)
     const horarios = Array.from({ length: 15 }, (_, i) => `${i + 8}h`);
