@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+:root {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 0 0% 16%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 237 83% 66%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 142 69% 45%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 36 97% 51%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+
+  --chart-1: 237 83% 66%;
+  --chart-2: 142 69% 45%;
+  --chart-3: 36 97% 51%;
+  --chart-4: 240 5% 64.9%;
+  --chart-5: 0 0% 40%;
+
+  --sidebar-background: 240 10% 3.9%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 237 83% 66%;
+  --sidebar-primary-foreground: 211 100% 99%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 240 4.9% 83.9%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+body {
+  background-color: hsl(240 10% 3.9%);
+  color: hsl(0 0% 98%);
+  overflow-x: hidden;
+}
+
+.font-mono {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+  z-index: 100;
+  transition: width 5s linear;
+}
+
+.page-transition {
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sparkline-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 2s linear forwards;
+}
+
+.donut-chart {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
