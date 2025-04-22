@@ -96,78 +96,73 @@ export function BrokerProfilePage() {
   useEffect(() => {
     if (brokerPoints) {
       const points: PointCategory[] = [];
+      const pointRules = {
+        // Regras positivas
+        leads_respondidos_1h: {
+          name: "Leads respondidos em 1 hora",
+          points: 2,
+          type: "Positivo"
+        },
+        leads_visitados: {
+          name: "Leads visitados",
+          points: 5,
+          type: "Positivo"
+        },
+        propostas_enviadas: {
+          name: "Propostas enviadas",
+          points: 8,
+          type: "Positivo"
+        },
+        vendas_realizadas: {
+          name: "Vendas realizadas",
+          points: 15,
+          type: "Positivo"
+        },
+        leads_atualizados_mesmo_dia: {
+          name: "Leads atualizados no mesmo dia",
+          points: 2,
+          type: "Positivo"
+        },
+        feedbacks_positivos: {
+          name: "Feedbacks positivos",
+          points: 3,
+          type: "Positivo"
+        },
+        // Regras negativas
+        leads_sem_interacao_24h: {
+          name: "Leads sem interação 24h",
+          points: -3,
+          type: "Negativo"
+        },
+        leads_respondidos_apos_18h: {
+          name: "Leads respondidos após 18h",
+          points: -2,
+          type: "Negativo"
+        },
+        leads_tempo_resposta_acima_12h: {
+          name: "Leads com tempo de resposta acima de 12h",
+          points: -2,
+          type: "Negativo"
+        },
+        leads_5_dias_sem_mudanca: {
+          name: "Leads 5+ dias sem mudança",
+          points: -4,
+          type: "Negativo"
+        }
+      };
 
-      // Adicionar pontos positivos se houver
-      const leadsRespondidos = brokerPoints.leads_respondidos_1h ?? 0;
-      if (leadsRespondidos > 0) {
-        points.push({
-          categoria: "Leads respondidos em 1h",
-          quantidade: leadsRespondidos,
-          pontos: leadsRespondidos * 2, // 2 pts por lead
-          tipo: "Positivo",
-        });
-      }
-
-      const leadsVisitados = brokerPoints.leads_visitados ?? 0;
-      if (leadsVisitados > 0) {
-        points.push({
-          categoria: "Leads visitados",
-          quantidade: leadsVisitados,
-          pontos: leadsVisitados * 5, // 5 pts por visita
-          tipo: "Positivo",
-        });
-      }
-
-      const propostasEnviadas = brokerPoints.propostas_enviadas ?? 0;
-      if (propostasEnviadas > 0) {
-        points.push({
-          categoria: "Propostas enviadas",
-          quantidade: propostasEnviadas,
-          pontos: propostasEnviadas * 8, // 8 pts por proposta
-          tipo: "Positivo",
-        });
-      }
-
-      const vendasRealizadas = brokerPoints.vendas_realizadas ?? 0;
-      if (vendasRealizadas > 0) {
-        points.push({
-          categoria: "Vendas realizadas",
-          quantidade: vendasRealizadas,
-          pontos: vendasRealizadas * 15, // 15 pts por venda
-          tipo: "Positivo",
-        });
-      }
-
-      // Adicionar pontos negativos se houver
-      const leadsSemInteracao = brokerPoints.leads_sem_interacao_24h ?? 0;
-      if (leadsSemInteracao > 0) {
-        points.push({
-          categoria: "Leads sem interação 24h",
-          quantidade: leadsSemInteracao,
-          pontos: -(leadsSemInteracao * 3), // -3 pts por lead
-          tipo: "Negativo",
-        });
-      }
-
-      const leadsRespondidosApos = brokerPoints.leads_respondidos_apos_18h ?? 0;
-      if (leadsRespondidosApos > 0) {
-        points.push({
-          categoria: "Leads respondidos após 18h",
-          quantidade: leadsRespondidosApos,
-          pontos: -(leadsRespondidosApos * 2), // -2 pts por lead
-          tipo: "Negativo",
-        });
-      }
-
-      const leadsSemMudanca = brokerPoints.leads_5_dias_sem_mudanca ?? 0;
-      if (leadsSemMudanca > 0) {
-        points.push({
-          categoria: "Leads 5+ dias sem mudança",
-          quantidade: leadsSemMudanca,
-          pontos: -(leadsSemMudanca * 4), // -4 pts por lead
-          tipo: "Negativo",
-        });
-      }
+      // Processa cada regra e adiciona ao array de pontos se houver quantidade
+      Object.entries(pointRules).forEach(([key, rule]) => {
+        const quantity = brokerPoints[key as keyof typeof brokerPoints] ?? 0;
+        if (quantity > 0) {
+          points.push({
+            categoria: rule.name,
+            quantidade: quantity,
+            pontos: quantity * rule.points,
+            tipo: rule.type
+          });
+        }
+      });
 
       setPointsData(points);
 
