@@ -222,8 +222,8 @@ export function BrokerProfilePage() {
             <span className="text-gray-500 text-sm">Ranking</span>
             <span className="mx-2 font-bold text-purple-800">#{id}</span>
             <span className="text-gray-500 text-sm">Pontuação</span>
-            <span className={`mx-2 font-bold ${brokerPoints.pontos >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {brokerPoints.pontos}
+            <span className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {brokerPoints.pontos ?? 0}
             </span>
           </div>
         </div>
