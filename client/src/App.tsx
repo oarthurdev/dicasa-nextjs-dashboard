@@ -19,12 +19,11 @@ function AutoRotation() {
   useEffect(() => {
     async function fetchTopBrokers() {
       try {
-        const response = await fetch('/api/brokers/rankings');
-        const data = await response.json();
+        const data = await import('@/lib/supabase').then(m => m.getBrokerRankings());
         
         // Pegar os IDs dos 3 principais corretores
         if (data && data.length >= 3) {
-          setTopBrokerIds(data.slice(0, 3).map((broker: any) => broker.id));
+          setTopBrokerIds(data.slice(0, 3).map(broker => broker.id));
         }
       } catch (error) {
         console.error("Erro ao buscar corretores:", error);

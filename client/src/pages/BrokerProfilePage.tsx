@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'wouter';
-import { Broker, BrokerPoints } from '@shared/schema';
 import { MetricCard } from '@/components/dashboard/MetricCard';
 import { HeatMap } from '@/components/dashboard/HeatMap';
 import { AlertList } from '@/components/dashboard/AlertList';
 import { ConversionFunnel } from '@/components/dashboard/ConversionFunnel';
 import { PointsBreakdown } from '@/components/dashboard/PointsBreakdown';
+import { 
+  getBrokerById, 
+  getBrokerPoints, 
+  getActivityHeatmap, 
+  getBrokerAlerts 
+} from '@/lib/supabase';
 
 interface BrokerPerformance {
   monthlyData: {
@@ -50,24 +55,28 @@ export function BrokerProfilePage() {
   // Estado para armazenar os dados formatados para o funil de conversão
   const [funnelData, setFunnelData] = useState<{ name: string; value: number; color: string }[]>([]);
 
-  // Consultas para buscar os dados do corretor
-  const { data: broker, isLoading: isLoadingBroker } = useQuery<Broker>({
-    queryKey: [`/api/brokers/${brokerId}`],
+  // Consultas para buscar os dados do corretor usando Supabase diretamente
+  const { data: broker, isLoading: isLoadingBroker } = useQuery({
+    queryKey: ['broker', brokerId],
+    queryFn: () => getBrokerById(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
-  const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery<BrokerPoints>({
-    queryKey: [`/api/brokers/${brokerId}/points`],
+  const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery({
+    queryKey: ['brokerPoints', brokerId],
+    queryFn: () => getBrokerPoints(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
   const { data: heatmapData, isLoading: isLoadingHeatmap } = useQuery<HeatMapData>({
-    queryKey: [`/api/brokers/${brokerId}/heatmap`],
+    queryKey: ['brokerHeatmap', brokerId],
+    queryFn: () => getActivityHeatmap(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
   const { data: alerts, isLoading: isLoadingAlerts } = useQuery<BrokerAlert[]>({
-    queryKey: [`/api/brokers/${brokerId}/alerts`],
+    queryKey: ['brokerAlerts', brokerId],
+    queryFn: () => getBrokerAlerts(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 

@@ -1,11 +1,12 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BrokerCard } from '@/components/dashboard/BrokerCard';
-import { BrokerPoints } from '@shared/schema';
+import { getBrokerRankings } from '@/lib/supabase';
 
 export function RankingPage() {
-  const { data: brokers, isLoading, error } = useQuery<BrokerPoints[]>({
-    queryKey: ['/api/brokers/rankings'],
+  const { data: brokers, isLoading, error } = useQuery({
+    queryKey: ['brokerRankings'],
+    queryFn: getBrokerRankings
   });
 
   return (
