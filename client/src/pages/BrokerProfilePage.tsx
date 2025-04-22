@@ -96,60 +96,152 @@ export function BrokerProfilePage() {
   useEffect(() => {
     if (brokerPoints) {
       const points: PointCategory[] = [];
-      const pointRules = {
-        // Regras positivas
-        leads_respondidos_1h: {
-          name: "Leads respondidos em 1 hora",
-          points: 2,
-          type: "Positivo"
-        },
-        leads_visitados: {
-          name: "Leads visitados",
-          points: 5,
-          type: "Positivo"
-        },
-        propostas_enviadas: {
-          name: "Propostas enviadas",
-          points: 8,
-          type: "Positivo"
-        },
-        vendas_realizadas: {
-          name: "Vendas realizadas",
-          points: 15,
-          type: "Positivo"
-        },
-        leads_atualizados_mesmo_dia: {
-          name: "Leads atualizados no mesmo dia",
-          points: 2,
-          type: "Positivo"
-        },
-        feedbacks_positivos: {
-          name: "Feedbacks positivos",
-          points: 3,
-          type: "Positivo"
-        },
-        // Regras negativas
-        leads_sem_interacao_24h: {
-          name: "Leads sem interação 24h",
-          points: -3,
-          type: "Negativo"
-        },
-        leads_respondidos_apos_18h: {
-          name: "Leads respondidos após 18h",
-          points: -2,
-          type: "Negativo"
-        },
-        leads_tempo_resposta_acima_12h: {
-          name: "Leads com tempo de resposta acima de 12h",
-          points: -2,
-          type: "Negativo"
-        },
-        leads_5_dias_sem_mudanca: {
-          name: "Leads 5+ dias sem mudança",
-          points: -4,
-          type: "Negativo"
-        }
-      };
+
+      // Regras positivas
+      if (brokerPoints.leads_respondidos_1h > 0) {
+        points.push({
+          categoria: "Leads respondidos em 1 hora",
+          quantidade: brokerPoints.leads_respondidos_1h,
+          pontos: brokerPoints.leads_respondidos_1h * 2,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.leads_visitados > 0) {
+        points.push({
+          categoria: "Leads visitados",
+          quantidade: brokerPoints.leads_visitados,
+          pontos: brokerPoints.leads_visitados * 5,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.propostas_enviadas > 0) {
+        points.push({
+          categoria: "Propostas enviadas",
+          quantidade: brokerPoints.propostas_enviadas,
+          pontos: brokerPoints.propostas_enviadas * 8,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.vendas_realizadas > 0) {
+        points.push({
+          categoria: "Vendas realizadas",
+          quantidade: brokerPoints.vendas_realizadas,
+          pontos: brokerPoints.vendas_realizadas * 15,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.leads_atualizados_mesmo_dia > 0) {
+        points.push({
+          categoria: "Leads atualizados no mesmo dia",
+          quantidade: brokerPoints.leads_atualizados_mesmo_dia,
+          pontos: brokerPoints.leads_atualizados_mesmo_dia * 2,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.feedbacks_positivos > 0) {
+        points.push({
+          categoria: "Feedbacks positivos",
+          quantidade: brokerPoints.feedbacks_positivos,
+          pontos: brokerPoints.feedbacks_positivos * 3,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.resposta_rapida_3h > 0) {
+        points.push({
+          categoria: "Resposta rápida (3h)",
+          quantidade: brokerPoints.resposta_rapida_3h,
+          pontos: brokerPoints.resposta_rapida_3h * 4,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.todos_leads_respondidos > 0) {
+        points.push({
+          categoria: "Todos leads respondidos",
+          quantidade: brokerPoints.todos_leads_respondidos,
+          pontos: brokerPoints.todos_leads_respondidos * 5,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.cadastro_completo > 0) {
+        points.push({
+          categoria: "Cadastro completo",
+          quantidade: brokerPoints.cadastro_completo,
+          pontos: brokerPoints.cadastro_completo * 3,
+          tipo: "Positivo"
+        });
+      }
+
+      if (brokerPoints.acompanhamento_pos_venda > 0) {
+        points.push({
+          categoria: "Acompanhamento pós-venda",
+          quantidade: brokerPoints.acompanhamento_pos_venda,
+          pontos: brokerPoints.acompanhamento_pos_venda * 10,
+          tipo: "Positivo"
+        });
+      }
+
+      // Regras negativas
+      if (brokerPoints.leads_sem_interacao_24h > 0) {
+        points.push({
+          categoria: "Leads sem interação 24h",
+          quantidade: brokerPoints.leads_sem_interacao_24h,
+          pontos: brokerPoints.leads_sem_interacao_24h * -3,
+          tipo: "Negativo"
+        });
+      }
+
+      if (brokerPoints.leads_respondidos_apos_18h > 0) {
+        points.push({
+          categoria: "Leads respondidos após 18h",
+          quantidade: brokerPoints.leads_respondidos_apos_18h,
+          pontos: brokerPoints.leads_respondidos_apos_18h * -2,
+          tipo: "Negativo"
+        });
+      }
+
+      if (brokerPoints.leads_com_reclamacao > 0) {
+        points.push({
+          categoria: "Leads com reclamação",
+          quantidade: brokerPoints.leads_com_reclamacao,
+          pontos: brokerPoints.leads_com_reclamacao * -4,
+          tipo: "Negativo"
+        });
+      }
+
+      if (brokerPoints.leads_perdidos > 0) {
+        points.push({
+          categoria: "Leads perdidos",
+          quantidade: brokerPoints.leads_perdidos,
+          pontos: brokerPoints.leads_perdidos * -6,
+          tipo: "Negativo"
+        });
+      }
+
+      if (brokerPoints.leads_tempo_resposta_acima_12h > 0) {
+        points.push({
+          categoria: "Leads com tempo de resposta acima de 12h",
+          quantidade: brokerPoints.leads_tempo_resposta_acima_12h,
+          pontos: brokerPoints.leads_tempo_resposta_acima_12h * -2,
+          tipo: "Negativo"
+        });
+      }
+
+      if (brokerPoints.leads_5_dias_sem_mudanca > 0) {
+        points.push({
+          categoria: "Leads sem atualização por 5+ dias",
+          quantidade: brokerPoints.leads_5_dias_sem_mudanca,
+          pontos: brokerPoints.leads_5_dias_sem_mudanca * -4,
+          tipo: "Negativo"
+        });
+      }
 
       // Processa cada regra e adiciona ao array de pontos se houver quantidade
       Object.entries(pointRules).forEach(([key, rule]) => {
