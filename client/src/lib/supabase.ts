@@ -109,31 +109,36 @@ export async function getBrokerPerformance(brokerId: number) {
 // Função auxiliar para gerar heatmap de atividades
 export async function getActivityHeatmap(brokerId: number) {
   try {
-    // Buscar atividades do corretor
+    // Buscar apenas mensagens enviadas pelo corretor entre 8h e 22h (apenas dias úteis)
     const { data, error } = await supabase
       .from('activities')
       .select('dia_semana, hora')
-      .eq('user_id', brokerId);
+      .eq('user_id', brokerId)
+      .eq('tipo', 'mensagem_enviada')
+      .gte('hora', 8)  // A partir das 8h
+      .lte('hora', 22); // Até as 22h
       
     if (error) {
       throw error;
     }
     
-    // Gerar heatmap
+    // Gerar heatmap (apenas para os dias da semana e horário comercial estendido)
     const dias = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
-    const horarios = Array.from({ length: 24 }, (_, i) => `${i}h`);
+    // Horários das 8h às 22h (horário comercial estendido)
+    const horarios = Array.from({ length: 15 }, (_, i) => `${i + 8}h`);
     
-    // Inicializar matriz de dados com zeros
-    const dados = Array(7).fill(0).map(() => Array(24).fill(0));
+    // Inicializar matriz de dados com zeros - 7 dias x 15 horas (8h-22h)
+    const dados = Array(7).fill(0).map(() => Array(15).fill(0));
     
     // Preencher os dados
     if (data) {
       data.forEach(activity => {
         const diaIndex = dias.indexOf(activity.dia_semana);
-        const hora = activity.hora;
+        // Ajustar a hora para o intervalo do array (0-14 representa 8h-22h)
+        const horaAjustada = activity.hora - 8;
         
-        if (diaIndex >= 0 && hora >= 0 && hora < 24) {
-          dados[diaIndex][hora]++;
+        if (diaIndex >= 0 && horaAjustada >= 0 && horaAjustada < 15) {
+          dados[diaIndex][horaAjustada]++;
         }
       });
     }

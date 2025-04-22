@@ -219,19 +219,19 @@ export function BrokerProfilePage() {
       {/* Cabeçalho com navegação */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <Link href="/" className="text-blue-500 hover:underline flex items-center">
+          <Link href="/" className="text-primary hover:text-primary/90 hover:underline flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Voltar para Ranking
           </Link>
           
-          <h1 className="text-2xl font-bold text-gray-800 mt-2">{broker.nome}</h1>
+          <h1 className="text-2xl font-bold text-foreground mt-2">{broker.nome}</h1>
           <div className="flex items-center mt-1">
-            <span className="text-gray-500 text-sm">Ranking</span>
-            <span className="mx-2 font-bold text-purple-800">#{id}</span>
-            <span className="text-gray-500 text-sm">Pontuação</span>
-            <span className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span className="text-muted-foreground text-sm">Ranking</span>
+            <span className="mx-2 font-bold text-primary">#{id}</span>
+            <span className="text-muted-foreground text-sm">Pontuação</span>
+            <span className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? 'text-secondary' : 'text-destructive'}`}>
               {brokerPoints.pontos ?? 0}
             </span>
           </div>

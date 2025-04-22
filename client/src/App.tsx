@@ -85,7 +85,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <div className="bg-gray-50 min-h-screen">
+        <div className="bg-background min-h-screen">
           <Router />
         </div>
       </TooltipProvider>

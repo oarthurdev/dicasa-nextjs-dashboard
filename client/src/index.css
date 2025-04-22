@@ -5,17 +5,18 @@
 @tailwind utilities;
 
 :root {
+  /* Tema dark */
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   --muted: 240 3.7% 15.9%;
   --muted-foreground: 240 5% 64.9%;
   --popover: 240 10% 3.9%;
   --popover-foreground: 0 0% 98%;
-  --card: 0 0% 16%;
+  --card: 222 47% 11%;
   --card-foreground: 0 0% 98%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
-  --primary: 237 83% 66%;
+  --primary: 217 91% 60%;
   --primary-foreground: 211 100% 99%;
   --secondary: 142 69% 45%;
   --secondary-foreground: 0 0% 98%;
@@ -26,15 +27,17 @@
   --ring: 240 4.9% 83.9%;
   --radius: 0.5rem;
 
-  --chart-1: 237 83% 66%;
+  /* Cores para gráficos */
+  --chart-1: 217 91% 60%;
   --chart-2: 142 69% 45%;
   --chart-3: 36 97% 51%;
-  --chart-4: 240 5% 64.9%;
-  --chart-5: 0 0% 40%;
+  --chart-4: 330 81% 60%;
+  --chart-5: 262 83% 62%;
 
-  --sidebar-background: 240 10% 3.9%;
+  /* Cores para o tema dark */
+  --sidebar-background: 222 47% 11%;
   --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 237 83% 66%;
+  --sidebar-primary: 217 91% 60%;
   --sidebar-primary-foreground: 211 100% 99%;
   --sidebar-accent: 240 3.7% 15.9%;
   --sidebar-accent-foreground: 0 0% 98%;

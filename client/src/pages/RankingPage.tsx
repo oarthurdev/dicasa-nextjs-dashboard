@@ -12,17 +12,17 @@ export function RankingPage() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">Ranking de Corretores</h1>
-        <p className="text-gray-500 text-sm">Classificação baseada em pontos acumulados por produtividade</p>
+        <h1 className="text-2xl font-bold text-foreground mb-1">Ranking de Corretores</h1>
+        <p className="text-muted-foreground text-sm">Classificação baseada em pontos acumulados por produtividade</p>
       </div>
 
       {isLoading ? (
         <div className="text-center py-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-500">Carregando dados...</p>
+          <p className="mt-4 text-muted-foreground">Carregando dados...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-50 text-red-500 p-4 rounded-lg">
+        <div className="bg-card text-destructive p-4 rounded-lg border border-destructive/20">
           Erro ao carregar os dados do ranking. Por favor, tente novamente.
         </div>
       ) : (
