@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface HeatMapProps {
@@ -53,36 +54,38 @@ export function HeatMap({ data }: HeatMapProps) {
             </tr>
           </thead>
           <tbody>
-            {data.horarios.map((horario, horarioIndex) => (
-              <tr key={horarioIndex}>
-                <td className="text-xs font-medium text-foreground p-1">{horario}</td>
-                {data.dias.map((_, diaIndex) => {
-                  // Ajuste os índices para corresponder aos dados
-                  const value = data.dados[diaIndex][horarioIndex] || 0;
-                  return (
-                    <td 
-                      key={diaIndex} 
-                      className="p-1"
-                    >
-                      <div 
-                        className="w-full h-8 rounded shadow-sm"
-                        style={{ 
-                          backgroundColor: getColor(value),
-                          transition: 'background-color 0.3s ease'
-                        }}
-                        title={`${value} mensagens enviadas`}
+            {[...data.horarios].reverse().map((horario, horarioIndex) => {
+              const actualIndex = data.horarios.length - 1 - horarioIndex;
+              return (
+                <tr key={horarioIndex}>
+                  <td className="text-xs font-medium text-foreground p-1">{horario}</td>
+                  {data.dias.map((_, diaIndex) => {
+                    const value = data.dados[diaIndex][actualIndex] || 0;
+                    return (
+                      <td 
+                        key={diaIndex} 
+                        className="p-1"
                       >
-                        {value > 0 && (
-                          <div className={`flex items-center justify-center h-full text-xs ${getTextColor(value)}`}>
-                            {value}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
+                        <div 
+                          className="w-full h-8 rounded shadow-sm"
+                          style={{ 
+                            backgroundColor: getColor(value),
+                            transition: 'background-color 0.3s ease'
+                          }}
+                          title={`${value} mensagens enviadas`}
+                        >
+                          {value > 0 && (
+                            <div className={`flex items-center justify-center h-full text-xs ${getTextColor(value)}`}>
+                              {value}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
