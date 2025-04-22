@@ -1,16 +1,18 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import * as supabaseServer from "./supabase";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Rota para obter o ranking de corretores (pontos)
   app.get("/api/brokers/rankings", async (req, res) => {
     try {
-      const brokers = await storage.getBrokerRankings();
+      const brokers = await supabaseServer.getBrokerRankings();
       res.json(brokers);
     } catch (error) {
       console.error("Erro ao buscar ranking de corretores:", error);
-      res.status(500).json({ message: "Falha ao buscar ranking de corretores" });
+      res
+        .status(500)
+        .json({ message: "Falha ao buscar ranking de corretores" });
     }
   });
 
@@ -18,12 +20,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const broker = await storage.getBrokerById(brokerId);
-      
+      const broker = await supabaseServer.getBrokerById(brokerId);
+
       if (!broker) {
         return res.status(404).json({ message: "Corretor não encontrado" });
       }
-      
+
       res.json(broker);
     } catch (error) {
       console.error("Erro ao buscar corretor:", error);
@@ -31,20 +33,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rota para obter a posição no ranking
+  app.get("/api/brokers/:id/rank-position", async (req, res) => {
+    try {
+      const brokerId = parseInt(req.params.id);
+      const position = await supabaseServer.getBrokerRankPosition(brokerId);
+      res.json({ position });
+    } catch (error) {
+      console.error("Erro ao buscar posição no ranking:", error);
+      res.status(500).json({ message: "Falha ao buscar posição no ranking" });
+    }
+  });
+
   // Rota para obter pontuação de um corretor
   app.get("/api/brokers/:id/points", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const brokerPoints = await storage.getBrokerPoints(brokerId);
-      
+      const brokerPoints = await supabaseServer.getBrokerPoints(brokerId);
+
       if (!brokerPoints) {
-        return res.status(404).json({ message: "Pontuação do corretor não encontrada" });
+        return res
+          .status(404)
+          .json({ message: "Pontuação do corretor não encontrada" });
       }
-      
+
       res.json(brokerPoints);
     } catch (error) {
       console.error("Erro ao buscar pontuação do corretor:", error);
-      res.status(500).json({ message: "Falha ao buscar pontuação do corretor" });
+      res
+        .status(500)
+        .json({ message: "Falha ao buscar pontuação do corretor" });
     }
   });
 
@@ -52,8 +70,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id/leads", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const leads = await storage.getBrokerLeads(brokerId);
-      
+      const leads = await supabaseServer.getBrokerLeads(brokerId);
+
       res.json(leads);
     } catch (error) {
       console.error("Erro ao buscar leads do corretor:", error);
@@ -65,12 +83,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id/activities", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const activities = await storage.getBrokerActivities(brokerId);
-      
+      const activities = await supabaseServer.getBrokerActivities(brokerId);
+
       res.json(activities);
     } catch (error) {
       console.error("Erro ao buscar atividades do corretor:", error);
-      res.status(500).json({ message: "Falha ao buscar atividades do corretor" });
+      res
+        .status(500)
+        .json({ message: "Falha ao buscar atividades do corretor" });
     }
   });
 
@@ -78,12 +98,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id/performance", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const performance = await storage.getBrokerPerformance(brokerId);
-      
+      const performance = await supabaseServer.getBrokerPerformance(brokerId);
+
       res.json(performance);
     } catch (error) {
       console.error("Erro ao buscar performance do corretor:", error);
-      res.status(500).json({ message: "Falha ao buscar dados de performance do corretor" });
+      res
+        .status(500)
+        .json({ message: "Falha ao buscar dados de performance do corretor" });
     }
   });
 
@@ -91,12 +113,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id/heatmap", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const heatmap = await storage.getActivityHeatmap(brokerId);
-      
+      const heatmap = await supabaseServer.getActivityHeatmap(brokerId);
+
       res.json(heatmap);
     } catch (error) {
       console.error("Erro ao buscar heatmap do corretor:", error);
-      res.status(500).json({ message: "Falha ao buscar mapa de calor de atividades" });
+      res
+        .status(500)
+        .json({ message: "Falha ao buscar mapa de calor de atividades" });
     }
   });
 
@@ -104,35 +128,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id/alerts", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const alerts = await storage.getBrokerAlerts(brokerId);
-      
+      const alerts = await supabaseServer.getBrokerAlerts(brokerId);
+
       res.json(alerts);
     } catch (error) {
       console.error("Erro ao buscar alertas do corretor:", error);
       res.status(500).json({ message: "Falha ao buscar alertas do corretor" });
     }
   });
-
-  // Rota para obter configuração da API Kommo
-  app.get("/api/config/kommo", async (req, res) => {
+  
+  // Rota para obter métricas do dashboard
+  app.get("/api/dashboard/metrics", async (req, res) => {
     try {
-      const config = await storage.getKommoConfig();
-      
-      if (!config) {
-        return res.status(404).json({ message: "Configuração da API Kommo não encontrada" });
-      }
-      
-      // Não retornar o token de acesso por segurança
-      const { access_token, refresh_token, ...safeConfig } = config;
-      
-      res.json({
-        ...safeConfig,
-        has_access_token: !!access_token,
-        has_refresh_token: !!refresh_token
-      });
+      const metrics = await supabaseServer.getDashboardMetrics();
+      res.json(metrics);
     } catch (error) {
-      console.error("Erro ao buscar configuração da API Kommo:", error);
-      res.status(500).json({ message: "Falha ao buscar configuração da API Kommo" });
+      console.error("Erro ao buscar métricas do dashboard:", error);
+      res.status(500).json({ message: "Falha ao buscar métricas do dashboard" });
     }
   });
 

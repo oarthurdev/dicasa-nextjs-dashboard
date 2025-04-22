@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BrokerCard } from '@/components/dashboard/BrokerCard';
 import { MetricSummaryCards } from '@/components/dashboard/MetricSummaryCards';
-import { getBrokerRankings, getDashboardMetrics } from '@/lib/supabase';
+import { getBrokerRankings, getDashboardMetrics } from '@/lib/api';
 
 export function RankingPage() {
   // Obter rankings dos brokers
