@@ -1,5 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -12,7 +14,7 @@ export async function apiRequest<T = any>(
   method: string = 'GET',
   data?: unknown | undefined,
 ): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch(API_URL + url, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
