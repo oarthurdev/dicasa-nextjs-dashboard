@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-import 'dotenv/config'
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Obter URL e chave anônima do Supabase das variáveis de ambiente
 const supabaseUrl = process.env.VITE_SUPABASE_URL || "";
