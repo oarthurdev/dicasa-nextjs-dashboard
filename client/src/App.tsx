@@ -22,8 +22,8 @@ function AutoRotation() {
         const data = await import('@/lib/supabase').then(m => m.getBrokerRankings());
         
         // Pegar os IDs dos 3 principais corretores
-        if (data && data.length >= 3) {
-          setTopBrokerIds(data.slice(0, 3).map(broker => broker.id));
+        if (data && data.length >= 7) {
+          setTopBrokerIds(data.slice(0, 7).map(broker => broker.id));
         }
       } catch (error) {
         console.error("Erro ao buscar corretores:", error);
