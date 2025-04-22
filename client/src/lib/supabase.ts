@@ -52,6 +52,29 @@ export async function getBrokerPoints(id: number) {
   return data;
 }
 
+// Nova função para encontrar a posição do broker no ranking
+export async function getBrokerRankPosition(id: number) {
+  try {
+    // Primeiro, vamos buscar todos os brokers ordenados por pontuação
+    const { data, error } = await supabase
+      .from('broker_points')
+      .select('id')
+      .order('pontos', { ascending: false });
+      
+    if (error) throw error;
+    
+    // Encontrar a posição do broker no array (posição no ranking)
+    const position = data.findIndex(broker => broker.id === id) + 1; // +1 porque o array começa em 0
+    
+    // Garantir que sempre retornamos um número (1 como padrão se não encontrar)
+    return position > 0 ? position : 1;
+  } catch (error) {
+    console.error(`Error finding rank position for broker with ID ${id}:`, error);
+    // Em caso de erro, retornar 1 como posição padrão
+    return 1;
+  }
+}
+
 export async function getBrokerLeads(id: number) {
   const { data, error } = await supabase
     .from('leads')

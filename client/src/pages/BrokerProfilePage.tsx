@@ -10,7 +10,8 @@ import {
   getBrokerById, 
   getBrokerPoints, 
   getActivityHeatmap, 
-  getBrokerAlerts 
+  getBrokerAlerts,
+  getBrokerRankPosition
 } from '@/lib/supabase';
 
 interface BrokerPerformance {
@@ -77,6 +78,13 @@ export function BrokerProfilePage() {
   const { data: alerts, isLoading: isLoadingAlerts } = useQuery<BrokerAlert[]>({
     queryKey: ['brokerAlerts', brokerId],
     queryFn: () => getBrokerAlerts(brokerId),
+    enabled: !!brokerId && !isNaN(brokerId),
+  });
+  
+  // Consulta para buscar a posição do broker no ranking
+  const { data: rankPosition, isLoading: isLoadingRankPosition } = useQuery<number>({
+    queryKey: ['brokerRankPosition', brokerId],
+    queryFn: () => getBrokerRankPosition(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
@@ -186,7 +194,7 @@ export function BrokerProfilePage() {
   }, [brokerPoints]);
 
   // Verificar se está carregando
-  const isLoading = isLoadingBroker || isLoadingPoints || isLoadingHeatmap || isLoadingAlerts;
+  const isLoading = isLoadingBroker || isLoadingPoints || isLoadingHeatmap || isLoadingAlerts || isLoadingRankPosition;
 
   if (isLoading) {
     return (
@@ -229,7 +237,7 @@ export function BrokerProfilePage() {
           <h1 className="text-2xl font-bold text-foreground mt-2">{broker.nome}</h1>
           <div className="flex items-center mt-1">
             <span className="text-muted-foreground text-sm">Ranking</span>
-            <span className="mx-2 font-bold text-primary">#{id}</span>
+            <span className="mx-2 font-bold text-primary">#{rankPosition}</span>
             <span className="text-muted-foreground text-sm">Pontuação</span>
             <span className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? 'text-secondary' : 'text-destructive'}`}>
               {brokerPoints.pontos ?? 0}
