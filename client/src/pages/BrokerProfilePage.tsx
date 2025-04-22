@@ -243,8 +243,8 @@ export function BrokerProfilePage() {
         });
       }
 
-      // Processa cada regra e adiciona ao array de pontos se houver quantidade
-      Object.entries(pointRules).forEach(([key, rule]) => {
+      // Set the processed points data
+      setPointsData(points);
         const quantity = brokerPoints[key as keyof typeof brokerPoints] ?? 0;
         if (quantity > 0) {
           points.push({
