@@ -38,12 +38,6 @@ export function BrokerCard({ rank, broker }: BrokerCardProps) {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground text-base">{broker.nome}</h3>
-                {hasWarnings && (
-                  <div className="flex items-center text-xs text-destructive font-medium mt-1">
-                    <span className="mr-1">⚠</span>
-                    <span>Precisa Atenção</span>
-                  </div>
-                )}
               </div>
             </div>
             <div className="text-right">

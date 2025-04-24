@@ -188,39 +188,11 @@ export function BrokerProfilePage() {
         });
       }
 
-      // Regras negativas
-      if (brokerPoints.leads_sem_interacao_24h > 0) {
-        points.push({
-          categoria: "Leads sem interação 24h",
-          quantidade: brokerPoints.leads_sem_interacao_24h,
-          pontos: brokerPoints.leads_sem_interacao_24h * -3,
-          tipo: "Negativo",
-        });
-      }
-
-      if (brokerPoints.leads_ignorados_48h > 0) {
-        points.push({
-          categoria: "Leads ignorados após 48h",
-          quantidade: brokerPoints.leads_ignorados_48h,
-          pontos: brokerPoints.leads_ignorados_48h * -5,
-          tipo: "Negativo",
-        });
-      }
-
-      if (brokerPoints.leads_com_reclamacao > 0) {
-        points.push({
-          categoria: "Leads com reclamação",
-          quantidade: brokerPoints.leads_com_reclamacao,
-          pontos: brokerPoints.leads_com_reclamacao * -4,
-          tipo: "Negativo",
-        });
-      }
-
       if (brokerPoints.leads_perdidos > 0) {
         points.push({
           categoria: "Leads perdidos",
           quantidade: brokerPoints.leads_perdidos,
-          pontos: brokerPoints.leads_perdidos * -6,
+          pontos: brokerPoints.leads_perdidos * -1,
           tipo: "Negativo",
         });
       }

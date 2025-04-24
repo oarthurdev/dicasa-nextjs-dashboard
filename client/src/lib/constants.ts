@@ -17,7 +17,7 @@ export const PROPERTY_TYPES = [
   "Land",
 ];
 
-export const ROTATION_INTERVAL = 7000; // 5 seconds
+export const ROTATION_INTERVAL = 10000; // 5 seconds
 
 export const BROKER_COLORS = [
   "#6366F1", // primary
