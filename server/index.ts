@@ -9,7 +9,7 @@ import cors from "cors";
 const app = express();
 
 app.use(cors({
-  origin: "http://45.90.120.55:8080",
+  origin: "*",
   credentials: true
 }));
 
