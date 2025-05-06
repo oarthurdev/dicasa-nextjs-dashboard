@@ -259,21 +259,6 @@ export function BrokerProfilePage() {
     );
   }
 
-  if (!broker || !brokerPoints) {
-    return (
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="bg-red-50 text-red-500 p-4 rounded-lg">
-          Corretor não encontrado ou dados incompletos.
-          <div className="mt-4">
-            <Link href="/" className="text-blue-500 hover:underline">
-              Voltar para o ranking
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Cabeçalho com navegação */}

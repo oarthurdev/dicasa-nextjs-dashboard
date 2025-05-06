@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 // Obter URL e chave anônima do Supabase das variáveis de ambiente
@@ -14,11 +14,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export async function getBrokerRankings() {
   const { data, error } = await supabase
     .from("broker_points")
-    .select(`
+    .select(
+      `
       *,
       brokers!inner(*)
-    `)
-    .eq('brokers.active', true)
+    `,
+    )
+    .eq("brokers.active", true)
     .order("pontos", { ascending: false });
 
   if (error) {
@@ -35,11 +37,16 @@ export async function getBrokerById(id: number) {
     .select("*")
     .eq("id", id)
     .eq("active", true)
-    .single();
+    .maybeSingle(); // Retorna null se não encontrar nenhum registro
 
   if (error) {
     console.error(`Error fetching broker with ID ${id}:`, error);
     throw error;
+  }
+
+  // Retorna apenas se encontrou algum registro
+  if (!data) {
+    return null;
   }
 
   return data;

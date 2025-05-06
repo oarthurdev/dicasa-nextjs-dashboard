@@ -14,36 +14,38 @@ function AutoRotation() {
   const [, setLocation] = useLocation();
   const [currentPage, setCurrentPage] = useState(0);
   const [topBrokerIds, setTopBrokerIds] = useState<number[]>([]);
-  
+
   // Carregar os IDs dos principais corretores
   useEffect(() => {
     async function fetchTopBrokers() {
       try {
-        const data = await import('@/lib/supabase').then(m => m.getBrokerRankings());
-        
+        const data = await import("@/lib/supabase").then((m) =>
+          m.getBrokerRankings(),
+        );
+
         // Pegar os IDs dos 3 principais corretores
         if (data) {
-          setTopBrokerIds(data.map(broker => broker.id));
+          setTopBrokerIds(data.map((broker) => broker.id));
         }
       } catch (error) {
         console.error("Erro ao buscar corretores:", error);
       }
     }
-    
+
     fetchTopBrokers();
   }, []);
-  
+
   // Calcular número total de páginas (ranking + perfis dos 3 principais corretores)
   const totalPages = 1 + (topBrokerIds?.length || 0);
-  
+
   // Função para navegar para a próxima página
   const goToNextPage = useCallback(() => {
     const nextPage = (currentPage + 1) % totalPages;
     setCurrentPage(nextPage);
-    
+
     if (nextPage === 0) {
       // Voltar para a página de ranking
-      setLocation('/');
+      setLocation("/");
     } else {
       // Ir para o perfil de um corretor específico
       const brokerId = topBrokerIds[nextPage - 1];
@@ -52,18 +54,18 @@ function AutoRotation() {
       }
     }
   }, [currentPage, totalPages, topBrokerIds, setLocation]);
-  
+
   // Configurar o timer para rotação automática
   useEffect(() => {
     if (totalPages <= 1) return; // Não rotar se só tiver uma página
-    
+
     const timer = setTimeout(() => {
       goToNextPage();
     }, ROTATION_INTERVAL);
-    
+
     return () => clearTimeout(timer);
   }, [goToNextPage, totalPages]);
-  
+
   return null; // Este componente não renderiza nada, apenas gerencia a navegação
 }
 
