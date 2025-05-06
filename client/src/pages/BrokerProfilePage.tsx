@@ -77,13 +77,13 @@ export function BrokerProfilePage() {
     }
   }, [error, navigate]);
 
-  if (error) return null;
-
   const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery({
     queryKey: ["brokerPoints", brokerId],
     queryFn: () => getBrokerPoints(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
+
+  if (error) return null;
 
   const { data: heatmapData, isLoading: isLoadingHeatmap } =
     useQuery<HeatMapData>({
