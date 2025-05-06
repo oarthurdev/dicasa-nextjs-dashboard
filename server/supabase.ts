@@ -14,10 +14,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export async function getBrokerRankings() {
   const { data, error } = await supabase
     .from("broker_points")
-    .select("*")
-    .order("pontos", { ascending: false })
-    .join("brokers", { type: "inner", on: "id" })
-    .filter("brokers.active", "eq", true);
+    .select(`
+      *,
+      brokers!inner(*)
+    `)
+    .eq('brokers.active', true)
+    .order("pontos", { ascending: false });
 
   if (error) {
     console.error("Error fetching broker rankings:", error);
