@@ -37,7 +37,8 @@ export async function getBrokerById(id: number) {
     .from("brokers")
     .select("*")
     .eq("id", id)
-    .single();
+    .eq("active", true)
+    .maybeSyngle();
 
   if (error) {
     console.error(`Error fetching broker with ID ${id}:`, error);

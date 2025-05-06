@@ -59,14 +59,18 @@ export function BrokerProfilePage() {
   >([]);
 
   // Consultas para buscar os dados do corretor usando Supabase diretamente
-  const { data: broker, isLoading: isLoadingBroker, error } = useQuery({
+  const {
+    data: broker,
+    isLoading: isLoadingBroker,
+    error,
+  } = useQuery({
     queryKey: ["broker", brokerId],
     queryFn: () => getBrokerById(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
   const [, navigate] = useLocation();
-  
+
   useEffect(() => {
     if (error?.message === "Corretor inativo ou não encontrado") {
       navigate("/");
