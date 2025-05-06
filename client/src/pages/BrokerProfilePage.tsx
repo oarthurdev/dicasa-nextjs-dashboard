@@ -65,11 +65,15 @@ export function BrokerProfilePage() {
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
-  // Redirecionar para a página inicial se o corretor não existir ou não estiver ativo
-  if (error?.message === "Corretor não encontrado ou inativo") {
-    window.location.href = "/";
-    return null;
-  }
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    if (error?.message === "Corretor inativo ou não encontrado") {
+      navigate("/");
+    }
+  }, [error, navigate]);
+
+  if (error) return null;
 
   const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery({
     queryKey: ["brokerPoints", brokerId],
