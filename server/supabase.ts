@@ -269,6 +269,7 @@ export async function getActiveBrokers() {
     const { data, error } = await supabase
       .from("brokers")
       .select("id")
+      .eq("cargo", "Corretor")
       .eq("active", true);
 
     if (error) throw error;
