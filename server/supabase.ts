@@ -15,7 +15,9 @@ export async function getBrokerRankings() {
   const { data, error } = await supabase
     .from("broker_points")
     .select("*")
-    .order("pontos", { ascending: false });
+    .order("pontos", { ascending: false })
+    .join("brokers", { type: "inner", on: "id" })
+    .filter("brokers.active", "eq", true);
 
   if (error) {
     console.error("Error fetching broker rankings:", error);
@@ -30,6 +32,7 @@ export async function getBrokerById(id: number) {
     .from("brokers")
     .select("*")
     .eq("id", id)
+    .eq("active", true)
     .single();
 
   if (error) {
@@ -46,7 +49,9 @@ export async function getBrokerRankPosition(id: number) {
     const { data, error } = await supabase
       .from("broker_points")
       .select("id")
-      .order("pontos", { ascending: false });
+      .order("pontos", { ascending: false })
+      .join("brokers", { type: "inner", on: "id" })
+      .filter("brokers.active", "eq", true);
 
     if (error) throw error;
 
@@ -258,12 +263,11 @@ export async function getTotalLeads() {
 
 export async function getActiveBrokers() {
   try {
-    // Consultar todos os corretores (assumindo que todos são ativos)
-    // Removida a condição de 'ativo' já que a coluna não existe
+    // Consultar todos os corretores ativos
     const { data, error } = await supabase
       .from("brokers")
       .select("id")
-      .eq("cargo", "Corretor");
+      .eq("active", true);
 
     if (error) throw error;
 

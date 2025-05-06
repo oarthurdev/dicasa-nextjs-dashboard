@@ -31,6 +31,7 @@ export const brokers = pgTable("brokers", {
   email: text("email"),
   foto_url: text("foto_url"),
   cargo: text("cargo"),
+  active: boolean("active").default(true),
   criado_em: timestamp("criado_em"),
   updated_at: timestamp("updated_at").defaultNow(),
 });
