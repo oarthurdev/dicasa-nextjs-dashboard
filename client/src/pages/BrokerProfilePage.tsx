@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { HeatMap } from "@/components/dashboard/HeatMap";
 import { AlertList } from "@/components/dashboard/AlertList";
