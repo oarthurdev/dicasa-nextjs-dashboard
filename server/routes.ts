@@ -22,8 +22,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const brokerId = parseInt(req.params.id);
       const broker = await supabaseServer.getBrokerById(brokerId);
 
-      if (!broker) {
-        return res.status(404).json({ message: "Corretor não encontrado" });
+      if (!broker || !broker.active) {
+        return res.status(404).json({ message: "Corretor não encontrado ou inativo" });
       }
 
       res.json(broker);

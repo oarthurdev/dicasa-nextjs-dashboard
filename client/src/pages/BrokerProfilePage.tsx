@@ -59,11 +59,17 @@ export function BrokerProfilePage() {
   >([]);
 
   // Consultas para buscar os dados do corretor usando Supabase diretamente
-  const { data: broker, isLoading: isLoadingBroker } = useQuery({
+  const { data: broker, isLoading: isLoadingBroker, error } = useQuery({
     queryKey: ["broker", brokerId],
     queryFn: () => getBrokerById(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
+
+  // Redirecionar para a página inicial se o corretor não existir ou não estiver ativo
+  if (error?.message === "Corretor não encontrado ou inativo") {
+    window.location.href = "/";
+    return null;
+  }
 
   const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery({
     queryKey: ["brokerPoints", brokerId],
