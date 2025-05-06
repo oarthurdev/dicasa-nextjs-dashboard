@@ -11,8 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin:
-      "https://1a87ab67-f0c1-49e2-8637-04bc5f72f552-00-3rstm9y7bbhmj.spock.replit.dev:8080",
+    origin: process.env.DOMAIN_URL,
     credentials: true,
   }),
 );
