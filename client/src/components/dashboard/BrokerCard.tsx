@@ -20,6 +20,8 @@ export function BrokerCard({ rank, broker }: BrokerCardProps) {
     navigate(`/broker/${broker.id}`);
   };
 
+  const companyName = broker.companies?.name || "Sem empresa";
+
   return (
     <div
       className="bg-card rounded-xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-shadow duration-300 cursor-pointer border border-border"
@@ -53,6 +55,9 @@ export function BrokerCard({ rank, broker }: BrokerCardProps) {
                 {broker.pontos ?? 0}
               </div>
             </div>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {companyName}
           </div>
 
           {/* Linha de métricas (leads, propostas, vendas) */}

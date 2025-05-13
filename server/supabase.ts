@@ -17,7 +17,13 @@ export async function getBrokerRankings() {
     .select(
       `
     *,
-    brokers!inner(*)
+    brokers!inner(
+      *,
+      companies(
+        id,
+        name
+      )
+    )
   `,
     )
     .eq("brokers.active", true)

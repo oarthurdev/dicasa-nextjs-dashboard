@@ -24,6 +24,13 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
+// Tabela de empresas
+export const companies = pgTable("companies", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
 // Tabela de corretores
 export const brokers = pgTable("brokers", {
   id: bigint("id", { mode: "number" }).primaryKey(),
@@ -32,6 +39,7 @@ export const brokers = pgTable("brokers", {
   foto_url: text("foto_url"),
   cargo: text("cargo"),
   active: boolean("active").default(true),
+  company_id: text("company_id").references(() => companies.id, { onDelete: "set null" }),
   criado_em: timestamp("criado_em"),
   updated_at: timestamp("updated_at").defaultNow(),
 });

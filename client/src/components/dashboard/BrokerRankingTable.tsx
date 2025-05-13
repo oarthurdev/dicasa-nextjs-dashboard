@@ -16,7 +16,7 @@ export function BrokerRankingTable({ brokers }: BrokerRankingTableProps) {
           </span>
         </div>
       </div>
-      
+
       <div className="overflow-hidden">
         {brokers.map((broker, index) => (
           <div 
