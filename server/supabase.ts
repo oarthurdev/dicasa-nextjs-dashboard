@@ -12,7 +12,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Broker related queries
 export async function getBrokerRankings() {
-  const { data, error } = await supabase
+  const { data: brokerData, error: brokerError } = await supabase
     .from("broker_points")
     .select(
       `
@@ -23,12 +23,34 @@ export async function getBrokerRankings() {
     .eq("brokers.active", true)
     .order("pontos", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching broker rankings:", error);
-    throw error;
+  if (brokerError) {
+    console.error("Error fetching broker rankings:", brokerError);
+    throw brokerError;
   }
 
-  return data;
+  // Get leads count for each broker
+  const { data: leadsData, error: leadsError } = await supabase
+    .from("leads")
+    .select('responsavel_id, count', { count: 'exact' })
+    .groupBy('responsavel_id');
+
+  if (leadsError) {
+    console.error("Error fetching leads count:", leadsError);
+    throw leadsError;
+  }
+
+  // Create a map of broker_id to leads count
+  const leadsCountMap = new Map(
+    leadsData?.map(item => [item.responsavel_id, item.count]) || []
+  );
+
+  // Merge the leads count with broker data
+  const enrichedData = brokerData?.map(broker => ({
+    ...broker,
+    total_leads: leadsCountMap.get(broker.id) || 0
+  }));
+
+  return enrichedData;
 }
 
 export async function getBrokerById(id: number) {
