@@ -23,7 +23,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const broker = await supabaseServer.getBrokerById(brokerId);
 
       if (!broker || !broker.active) {
-        return res.status(403).json({ message: "Corretor inativo ou não encontrado" });
+        return res
+          .status(403)
+          .json({ message: "Corretor inativo ou não encontrado" });
       }
 
       res.json(broker);
@@ -136,27 +138,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Falha ao buscar alertas do corretor" });
     }
   });
-  
+
   // Rota para obter métricas do dashboard
   app.get("/api/dashboard/metrics", async (req, res) => {
     try {
       // Fetch total leads only from active brokers with "Corretor" role
-      const [totalLeads, activeBrokers, averagePoints, totalSales] = await Promise.all([
-        supabaseServer.getTotalLeads(), // This now uses the updated function that filters by broker role
-        supabaseServer.getActiveBrokers(),
-        supabaseServer.getAveragePoints(),
-        supabaseServer.getTotalSales()
-      ]);
+      const [totalLeads, activeBrokers, maxPoints, totalSales] =
+        await Promise.all([
+          supabaseServer.getTotalLeads(), // This now uses the updated function that filters by broker role
+          supabaseServer.getActiveBrokers(),
+          supabaseServer.getMaxPoints(),
+          supabaseServer.getTotalSales(),
+        ]);
 
       res.json({
         totalLeads,
         activeBrokers,
-        averagePoints,
-        totalSales
+        maxPoints,
+        totalSales,
       });
     } catch (error) {
       console.error("Erro ao buscar métricas do dashboard:", error);
-      res.status(500).json({ message: "Falha ao buscar métricas do dashboard" });
+      res
+        .status(500)
+        .json({ message: "Falha ao buscar métricas do dashboard" });
     }
   });
 

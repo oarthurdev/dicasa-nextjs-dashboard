@@ -16,9 +16,9 @@ export async function getBrokerRankings() {
     .from("broker_points")
     .select(
       `
-      *,
-      brokers!inner(*)
-    `,
+    *,
+    brokers!inner(*)
+  `,
     )
     .eq("brokers.active", true)
     .order("pontos", { ascending: false });
@@ -30,10 +30,10 @@ export async function getBrokerRankings() {
 
   // Get leads count for each broker using count
   const leadsCountMap = new Map();
-  
+
   // Fetch all unique broker IDs from brokerData
-  const brokerIds = brokerData?.map(broker => broker.id) || [];
-  
+  const brokerIds = brokerData?.map((broker) => broker.id) || [];
+
   // Get count for each broker
   for (const brokerId of brokerIds) {
     const { count, error: countError } = await supabase
@@ -42,7 +42,10 @@ export async function getBrokerRankings() {
       .eq("responsavel_id", brokerId);
 
     if (countError) {
-      console.error(`Error fetching leads count for broker ${brokerId}:`, countError);
+      console.error(
+        `Error fetching leads count for broker ${brokerId}:`,
+        countError,
+      );
       throw countError;
     }
 
@@ -50,9 +53,9 @@ export async function getBrokerRankings() {
   }
 
   // Merge the leads count with broker data
-  const enrichedData = brokerData?.map(broker => ({
+  const enrichedData = brokerData?.map((broker) => ({
     ...broker,
-    total_leads: leadsCountMap.get(broker.id) || 0
+    total_leads: leadsCountMap.get(broker.id) || 0,
   }));
 
   return enrichedData;
@@ -285,8 +288,12 @@ export async function getBrokerPerformance(brokerId: number) {
 // Funções para obter métricas gerais do dashboard
 export async function getTotalLeads() {
   try {
-    // Apenas consultar todos e contar o resultado
-    const { data, error } = await supabase.from("leads").select("id");
+    // Buscar leads apenas de corretores ativos
+    const { data, error } = await supabase
+      .from("leads")
+      .select("id, brokers!inner(*)")
+      .eq("brokers.cargo", "Corretor")
+      .eq("brokers.active", true);
 
     if (error) throw error;
 
@@ -315,20 +322,20 @@ export async function getActiveBrokers() {
   }
 }
 
-export async function getAveragePoints() {
+export async function getMaxPoints() {
   try {
     const { data, error } = await supabase
       .from("broker_points")
-      .select("pontos");
+      .select("pontos")
+      .order("pontos", { ascending: false })
+      .limit(1)
+      .single();
 
     if (error) throw error;
 
-    if (!data || data.length === 0) return 0;
-
-    const total = data.reduce((sum, broker) => sum + (broker.pontos || 0), 0);
-    return Math.round(total / data.length);
+    return data?.pontos || 0;
   } catch (error) {
-    console.error("Error calculating average points:", error);
+    console.error("Error getting max points:", error);
     return 0;
   }
 }
@@ -337,16 +344,15 @@ export async function getTotalSales() {
   try {
     const { data, error } = await supabase
       .from("broker_points")
-      .select("vendas_realizadas");
+      .select("vendas_realizadas, brokers!inner(id, cargo, active)")
+      .eq("brokers.cargo", "Corretor")
+      .eq("brokers.active", true);
 
     if (error) throw error;
 
     if (!data) return 0;
 
-    return data.reduce(
-      (sum, broker) => sum + (broker.vendas_realizadas || 0),
-      0,
-    );
+    return data.reduce((sum, item) => sum + (item.vendas_realizadas || 0), 0);
   } catch (error) {
     console.error("Error calculating total sales:", error);
     return 0;
