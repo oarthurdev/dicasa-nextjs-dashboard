@@ -52,15 +52,15 @@ export function BrokerCard({ rank, broker }: BrokerCardProps) {
           <div className="grid grid-cols-3 gap-2 mt-2 text-center">
             <div className="bg-muted py-2 px-3 rounded shadow-sm">
               <div className="text-xs font-medium text-muted-foreground mb-1">Leads</div>
-              <div className="font-semibold text-foreground">{broker.leads_respondidos_1h ?? 0}</div>
+              <div className="font-semibold text-foreground">{broker.total_leads ?? 0}</div>
             </div>
             <div className="bg-muted py-2 px-3 rounded shadow-sm">
               <div className="text-xs font-medium text-muted-foreground mb-1">Propostas</div>
-              <div className="font-semibold text-foreground">{broker.propostas_enviadas ?? 0}</div>
+              <div className="font-semibold text-foreground">{broker.total_propostas ?? 0}</div>
             </div>
             <div className="bg-muted py-2 px-3 rounded shadow-sm">
               <div className="text-xs font-medium text-muted-foreground mb-1">Vendas</div>
-              <div className="font-semibold text-foreground">{broker.vendas_realizadas ?? 0}</div>
+              <div className="font-semibold text-foreground">{broker.total_vendas ?? 0}</div>
             </div>
           </div>
         </div>
