@@ -28,21 +28,26 @@ export async function getBrokerRankings() {
     throw brokerError;
   }
 
-  // Get leads count for each broker
-  const { data: leadsData, error: leadsError } = await supabase
-    .from("leads")
-    .select('responsavel_id, count', { count: 'exact' })
-    .groupBy('responsavel_id');
+  // Get leads count for each broker using count
+  const leadsCountMap = new Map();
+  
+  // Fetch all unique broker IDs from brokerData
+  const brokerIds = brokerData?.map(broker => broker.id) || [];
+  
+  // Get count for each broker
+  for (const brokerId of brokerIds) {
+    const { count, error: countError } = await supabase
+      .from("leads")
+      .select("*", { count: "exact", head: true })
+      .eq("responsavel_id", brokerId);
 
-  if (leadsError) {
-    console.error("Error fetching leads count:", leadsError);
-    throw leadsError;
+    if (countError) {
+      console.error(`Error fetching leads count for broker ${brokerId}:`, countError);
+      throw countError;
+    }
+
+    leadsCountMap.set(brokerId, count || 0);
   }
-
-  // Create a map of broker_id to leads count
-  const leadsCountMap = new Map(
-    leadsData?.map(item => [item.responsavel_id, item.count]) || []
-  );
 
   // Merge the leads count with broker data
   const enrichedData = brokerData?.map(broker => ({
