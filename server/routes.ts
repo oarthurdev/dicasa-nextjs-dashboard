@@ -140,8 +140,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rota para obter métricas do dashboard
   app.get("/api/dashboard/metrics", async (req, res) => {
     try {
-      const metrics = await supabaseServer.getDashboardMetrics();
-      res.json(metrics);
+      // Fetch total leads only from active brokers with "Corretor" role
+      const [totalLeads, activeBrokers, averagePoints, totalSales] = await Promise.all([
+        supabaseServer.getTotalLeads(), // This now uses the updated function that filters by broker role
+        supabaseServer.getActiveBrokers(),
+        supabaseServer.getAveragePoints(),
+        supabaseServer.getTotalSales()
+      ]);
+
+      res.json({
+        totalLeads,
+        activeBrokers,
+        averagePoints,
+        totalSales
+      });
     } catch (error) {
       console.error("Erro ao buscar métricas do dashboard:", error);
       res.status(500).json({ message: "Falha ao buscar métricas do dashboard" });
