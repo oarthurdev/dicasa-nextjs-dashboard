@@ -3,8 +3,14 @@ import { createServer, type Server } from "http";
 import * as supabaseServer from "./supabase";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Extract company_id from path parameter
+  app.param('companyId', (req, res, next, companyId) => {
+    req.companyId = companyId;
+    next();
+  });
+
   // Rota para obter o ranking de corretores (pontos)
-  app.get("/api/brokers/rankings", async (req, res) => {
+  app.get("/api/:companyId/brokers/rankings", async (req, res) => {
     try {
       const brokers = await supabaseServer.getBrokerRankings();
       res.json(brokers);

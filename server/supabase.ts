@@ -11,7 +11,7 @@ const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || "";
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Broker related queries
-export async function getBrokerRankings() {
+export async function getBrokerRankings(companyId: string) {
   const { data: brokerData, error: brokerError } = await supabase
     .from("broker_points")
     .select(
