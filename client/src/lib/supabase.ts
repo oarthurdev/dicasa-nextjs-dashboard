@@ -264,8 +264,12 @@ export async function getBrokerAlerts(brokerId: number) {
 // Funções para obter métricas gerais do dashboard
 export async function getTotalLeads() {
   try {
-    // Apenas consultar todos e contar o resultado
-    const { data, error } = await supabase.from("leads").select("id");
+    // Buscar leads apenas de corretores ativos
+    const { data, error } = await supabase
+      .from("leads")
+      .select("id, brokers!inner(*)")
+      .eq("brokers.cargo", "Corretor")
+      .eq("brokers.active", true);
 
     if (error) throw error;
 
