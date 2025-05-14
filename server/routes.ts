@@ -29,7 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const broker = await supabaseServer.getBrokerById(brokerId);
+      const broker = await supabaseServer.getBrokerById(brokerId, req.companyId);
 
       if (!broker || !broker.active) {
         return res

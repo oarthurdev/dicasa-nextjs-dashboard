@@ -27,6 +27,7 @@ export async function getBrokerRankings(companyId: string) {
   `,
     )
     .eq("brokers.active", true)
+    .eq("brokers.company_id", companyId)
     .order("pontos", { ascending: false });
 
   if (brokerError) {
@@ -67,12 +68,13 @@ export async function getBrokerRankings(companyId: string) {
   return enrichedData;
 }
 
-export async function getBrokerById(id: number) {
+export async function getBrokerById(id: number, companyId: string) {
   const { data, error } = await supabase
     .from("brokers")
     .select("*")
     .eq("id", id)
     .eq("active", true)
+    .eq("company_id", companyId)
     .maybeSingle(); // Retorna null se não encontrar nenhum registro
 
   if (error) {
