@@ -2,11 +2,11 @@ import { apiRequest } from './queryClient';
 
 // Broker related queries
 export async function getBrokerRankings(companyId: string) {
-  return apiRequest(`/api/brokers/rankings`, 'GET');
+  return apiRequest(`/${companyId}/api/brokers/rankings`, 'GET');
 }
 
 export async function getBrokerById(companyId: string, id: number) {
-  return apiRequest(`/api/brokers/${id}`, 'GET');
+  return apiRequest(`/${companyId}/api/brokers/${id}`, 'GET');
 }
 
 export async function getBrokerRankPosition(id: number) {

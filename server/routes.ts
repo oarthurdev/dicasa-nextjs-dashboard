@@ -7,8 +7,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use((req, res, next) => {
     const pathSegments = req.path.split("/");
     // First segment after base path will be company ID
-    const companyId = pathSegments[1];
-    req.companyId = companyId;
+    if (pathSegments.length >= 2 && pathSegments[1].length > 0) {
+      const companyId = pathSegments[1];
+      req.companyId = companyId;
+    }
     next();
   });
 
