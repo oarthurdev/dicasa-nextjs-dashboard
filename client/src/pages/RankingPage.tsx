@@ -6,13 +6,15 @@ import { getBrokerRankings, getDashboardMetrics } from "@/lib/api";
 import { Medal } from "lucide-react";
 
 export function RankingPage() {
+  const { companyId } = useParams<{ companyId: string }>();
   const {
     data: brokers,
     isLoading: isLoadingBrokers,
     error: brokersError,
   } = useQuery({
-    queryKey: ["brokerRankings"],
-    queryFn: getBrokerRankings,
+    queryKey: ["brokerRankings", companyId],
+    queryFn: () => getBrokerRankings(companyId),
+    enabled: !!companyId,
   });
 
   const {

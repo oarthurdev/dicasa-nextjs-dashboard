@@ -74,8 +74,8 @@ function Router() {
     <>
       <AutoRotation />
       <Switch>
-        <Route path="/" component={RankingPage} />
-        <Route path="/broker/:id" component={BrokerProfilePage} />
+        <Route path="/:companyId" component={RankingPage} />
+        <Route path="/:companyId/broker/:id" component={BrokerProfilePage} />
         <Route component={NotFound} />
       </Switch>
     </>

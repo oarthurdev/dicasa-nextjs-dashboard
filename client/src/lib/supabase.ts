@@ -18,7 +18,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Broker related queries
-export async function getBrokerRankings() {
+export async function getBrokerRankings(companyId: string) {
   const { data, error } = await supabase
     .from("broker_points")
     .select(

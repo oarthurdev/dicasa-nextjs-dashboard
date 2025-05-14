@@ -265,7 +265,7 @@ export function BrokerProfilePage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <Link
-            href="/"
+            href={`/${companyId}`}
             className="text-primary hover:text-primary/90 hover:underline flex items-center"
           >
             <svg
