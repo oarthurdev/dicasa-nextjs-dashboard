@@ -10,7 +10,7 @@ import NotFound from "@/pages/not-found";
 import { ROTATION_INTERVAL } from "@/lib/constants";
 
 // Componente para rotação automática de páginas
-function AutoRotation() {
+function AutoRotation({ companyId }: { companyId: string }) {
   const [, setLocation] = useLocation();
   const [currentPage, setCurrentPage] = useState(0);
   const [topBrokerIds, setTopBrokerIds] = useState<number[]>([]);
@@ -33,7 +33,7 @@ function AutoRotation() {
     }
 
     fetchTopBrokers();
-  }, []);
+  }, [companyId]); // Agora, busca é feita toda vez que o companyId muda
 
   // Calcular número total de páginas (ranking + perfis dos 3 principais corretores)
   const totalPages = 1 + (topBrokerIds?.length || 0);
@@ -45,15 +45,15 @@ function AutoRotation() {
 
     if (nextPage === 0) {
       // Voltar para a página de ranking
-      setLocation("/");
+      setLocation(`/${companyId}`);
     } else {
       // Ir para o perfil de um corretor específico
       const brokerId = topBrokerIds[nextPage - 1];
       if (brokerId) {
-        setLocation(`/broker/${brokerId}`);
+        setLocation(`/${companyId}/broker/${brokerId}`);
       }
     }
-  }, [currentPage, totalPages, topBrokerIds, setLocation]);
+  }, [currentPage, totalPages, topBrokerIds, companyId, setLocation]);
 
   // Configurar o timer para rotação automática
   useEffect(() => {
@@ -70,9 +70,19 @@ function AutoRotation() {
 }
 
 function Router() {
+  const location = useLocation();
+  const pathSegments = location[0].split("/");
+
+  // Extrair o companyId do caminho
+  const companyId = pathSegments[1]; // Pega o primeiro segmento após a barra
+
+  if (!companyId) {
+    return <NotFound />;
+  }
+
   return (
     <>
-      <AutoRotation />
+      <AutoRotation companyId={companyId} />
       <Switch>
         <Route path="/:companyId" component={RankingPage} />
         <Route path="/:companyId/broker/:id" component={BrokerProfilePage} />
@@ -96,3 +106,4 @@ function App() {
 }
 
 export default App;
+

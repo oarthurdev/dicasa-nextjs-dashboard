@@ -13,6 +13,7 @@ import path from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Função de log
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -24,6 +25,7 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// Função para configurar o Vite no Express
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: false,
@@ -31,6 +33,7 @@ export async function setupVite(app: Express, server: Server) {
     allowedHosts: []
   };
 
+  // Criando o servidor Vite
   const vite = await createViteServer({
     ...viteConfig,
     configFile: false,
@@ -45,16 +48,33 @@ export async function setupVite(app: Express, server: Server) {
     appType: "custom",
   });
 
+  // Adicionando o middleware do Vite
   app.use(vite.middlewares);
+
+  // Middleware para capturar o companyId da URL
+  app.use("/:companyId", async (req, res, next) => {
+    const { companyId } = req.params;
+    
+    console.log(companyId)
+    if (!companyId) {
+      return res.status(400).json({ error: "Company ID is required" });
+    }
+
+    // Configurar variável de ambiente para Vite
+    process.env.VITE_COMPANY_ID = companyId;
+
+    next();
+  });
+
+  // Roteamento da requisição para o index.html com a aplicação frontend
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
     const distDir = path.resolve(__dirname, '..', 'dist');
-
     try {
       const clientTemplate = path.resolve(distDir, 'index.html');
 
-      // always reload the index.html file from disk incase it changes
+      // Sempre recarrega o index.html do disco caso mude
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       template = template.replace(
         `src="/src/main.tsx"`,
@@ -69,14 +89,16 @@ export async function setupVite(app: Express, server: Server) {
   });
 }
 
+// Função para servir arquivos estáticos
 export function serveStatic(app: Express) {
-   const distDir = path.resolve(__dirname, '..', 'dist');  // Caminho correto para a pasta 'dist'
+  const distDir = path.resolve(__dirname, '..', 'dist'); // Caminho correto para a pasta 'dist'
 
-   app.use(express.static(distDir));  // Serve os arquivos estáticos
+  // Serve os arquivos estáticos
+  app.use(express.static(distDir));
 
-   // Roteia todas as outras requisições para o arquivo 'index.html' de produção
-   app.get('*', (req, res) => {
-     res.sendFile(path.resolve(distDir, 'index.html'));
-   });
+  // Roteia todas as outras requisições para o arquivo 'index.html' de produção
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(distDir, 'index.html'));
+  });
 }
 

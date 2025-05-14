@@ -5,20 +5,23 @@ import { isUUID } from "validator"; // Importe a função isUUID
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Extract company_id from first path segment
-  app.use((req, res, next) => {
-    const pathSegments = req.path.split("/");
+  
+app.use((req, res, next) => {
+  // Remover '/api' da URL, caso ele exista
+  const pathSegments = req.path.split("/");
 
-    // Verificar se o primeiro segmento após /api é um UUID
-    if (pathSegments.length >= 3 && isUUID(pathSegments[2])) {
-      const companyId = pathSegments[2];
-      req.companyId = companyId;
-    } else {
-      // Tratar erro caso o ID não seja um UUID válido ou não esteja presente
-      return res.status(400).json({ message: "ID de empresa inválido." });
-    }
+  // Verificar se o primeiro segmento após /api é um UUID
+  // Aqui estamos pegando o primeiro segmento após /api
+  if (pathSegments.length >= 2 && isUUID(pathSegments[1])) {
+    const companyId = pathSegments[1];
+    req.companyId = companyId;
+  } else {
+    // Tratar erro caso o ID não seja um UUID válido ou não esteja presente
+    return res.status(400).json({ message: "ID de empresa inválido." });
+  }
 
-    next();
-  });
+  next();
+});
 
   // Rota para obter o ranking de corretores (pontos)
   app.get("/api/brokers/rankings", async (req, res) => {
