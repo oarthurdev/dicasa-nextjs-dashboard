@@ -5,7 +5,7 @@ import * as supabaseServer from "./supabase";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Extract company_id from first path segment
   app.use((req, res, next) => {
-    const pathSegments = req.path.split('/');
+    const pathSegments = req.path.split("/");
     // First segment after base path will be company ID
     const companyId = pathSegments[1];
     req.companyId = companyId;
@@ -15,7 +15,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Rota para obter o ranking de corretores (pontos)
   app.get("/api/brokers/rankings", async (req, res) => {
     try {
-      const brokers = await supabaseServer.getBrokerRankings();
+      const brokers = await supabaseServer.getBrokerRankings(req.companyId);
       res.json(brokers);
     } catch (error) {
       console.error("Erro ao buscar ranking de corretores:", error);
@@ -29,7 +29,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/brokers/:id", async (req, res) => {
     try {
       const brokerId = parseInt(req.params.id);
-      const broker = await supabaseServer.getBrokerById(brokerId, req.companyId);
+      const broker = await supabaseServer.getBrokerById(
+        brokerId,
+        req.companyId,
+      );
 
       if (!broker || !broker.active) {
         return res
