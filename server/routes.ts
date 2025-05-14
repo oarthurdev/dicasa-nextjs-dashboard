@@ -1,16 +1,22 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import * as supabaseServer from "./supabase";
+import { isUUID } from "validator"; // Importe a função isUUID
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Extract company_id from first path segment
   app.use((req, res, next) => {
     const pathSegments = req.path.split("/");
-    // First segment after base path will be company ID
-    if (pathSegments.length >= 2 && pathSegments[1].length > 0) {
-      const companyId = pathSegments[1];
+
+    // Verificar se o primeiro segmento após /api é um UUID
+    if (pathSegments.length >= 3 && isUUID(pathSegments[2])) {
+      const companyId = pathSegments[2];
       req.companyId = companyId;
+    } else {
+      // Tratar erro caso o ID não seja um UUID válido ou não esteja presente
+      return res.status(400).json({ message: "ID de empresa inválido." });
     }
+
     next();
   });
 
