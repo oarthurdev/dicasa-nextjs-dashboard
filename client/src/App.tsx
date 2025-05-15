@@ -6,7 +6,7 @@ import { RankingPage } from "@/pages/RankingPage";
 import { BrokerProfilePage } from "@/pages/BrokerProfilePage";
 import { Route, Switch, useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ROTATION_INTERVAL } from "@/lib/constants";
 
 // Componente para rotação automática de páginas
@@ -37,7 +37,7 @@ function AutoRotation() {
   }, []);
 
   // Calcular número total de páginas (ranking + perfis dos 3 principais corretores)
-  const totalPages = 1 + (topBrokerIds?.length || 0);
+  const totalPages = 1 + (topBrokerIds && topBrokerIds.length ? topBrokerIds.length : 0);
 
   // Função para navegar para a próxima página
   const goToNextPage = useCallback(() => {
