@@ -41,25 +41,19 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Router() {
-  return (
-    <PageTransition>
-      <Switch>
-        <Route path="/" component={RankingPage} />
-        <Route path="/broker/:id" component={BrokerProfilePage} />
-        <Route component={NotFound} />
-      </Switch>
-    </PageTransition>
-  );
-}
-
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
         <div className="bg-background min-h-screen">
-          <Router />
+          <PageTransition>
+            <Switch>
+              <Route path="/" component={RankingPage} />
+              <Route path="/broker/:id" component={BrokerProfilePage} />
+              <Route component={NotFound} />
+            </Switch>
+          </PageTransition>
+          <Toaster />
         </div>
       </TooltipProvider>
     </QueryClientProvider>
