@@ -63,15 +63,15 @@ export function BrokerRankingTable({ brokers }: BrokerRankingTableProps) {
                 <div className="flex items-center gap-8">
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">Imóveis</p>
-                    <p className="font-mono text-lg font-semibold">{broker.properties_sold}</p>
+                    <p className="font-mono text-lg font-semibold">{broker.properties_sold || 0}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">Vendas</p>
-                    <p className="font-mono text-lg font-semibold">{formatCurrency(broker.total_sales)}</p>
+                    <p className="font-mono text-lg font-semibold">{formatCurrency(broker.total_sales || 0)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-muted-foreground">Pontos</p>
-                    <p className="font-mono text-lg font-bold text-primary">{formatNumber(broker.points)}</p>
+                    <p className="font-mono text-lg font-bold text-primary">{formatNumber(broker.points || 0)}</p>
                   </div>
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                     <ArrowRight className="w-5 h-5 text-primary" />
