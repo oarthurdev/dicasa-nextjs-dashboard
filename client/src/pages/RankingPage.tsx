@@ -4,7 +4,7 @@ import { BrokerCard } from "@/components/dashboard/BrokerCard";
 import { MetricSummaryCards } from "@/components/dashboard/MetricSummaryCards";
 import { getBrokerRankings, getDashboardMetrics } from "@/lib/api";
 import { Medal } from "lucide-react";
-import { BrokerRankingTable } from "@/components/dashboard/BrokerRankingTable";
+import { ProgressBar } from "@/components/dashboard/ProgressBar";
 
 export function RankingPage() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -55,11 +55,7 @@ export function RankingPage() {
           isLoading={isLoadingMetrics}
         />
 
-        {brokers && brokers.length > 0 && (
-          <BrokerRankingTable brokers={brokers} />
-        )}
-
-        {/* {isLoading ? (
+        {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
@@ -74,7 +70,7 @@ export function RankingPage() {
               <BrokerCard key={broker.id} rank={index + 1} broker={broker} />
             ))}
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );
