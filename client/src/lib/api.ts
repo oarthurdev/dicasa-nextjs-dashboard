@@ -1,12 +1,12 @@
+
 import { apiRequest } from './queryClient';
 
-// Broker related queries
-export async function getBrokerRankings(companyId: string) {
-  return apiRequest(`/${companyId}/api/brokers/rankings`, 'GET');
+export async function getBrokerRankings() {
+  return apiRequest('/api/brokers/rankings', 'GET');
 }
 
-export async function getBrokerById(companyId: string, id: number) {
-  return apiRequest(`/${companyId}/api/brokers/${id}`, 'GET');
+export async function getBrokerById(id: number) {
+  return apiRequest(`/api/brokers/${id}`, 'GET');
 }
 
 export async function getBrokerRankPosition(id: number) {
@@ -26,7 +26,6 @@ export async function getBrokerActivities(id: number) {
   return apiRequest(`/api/brokers/${id}/activities`, 'GET');
 }
 
-// Analytics related queries
 export async function getBrokerPerformance(brokerId: number) {
   return apiRequest(`/api/brokers/${brokerId}/performance`, 'GET');
 }
@@ -39,7 +38,6 @@ export async function getBrokerAlerts(brokerId: number) {
   return apiRequest(`/api/brokers/${brokerId}/alerts`, 'GET');
 }
 
-// Dashboard metrics
 export async function getDashboardMetrics() {
   return apiRequest('/api/dashboard/metrics', 'GET');
 }
