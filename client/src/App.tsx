@@ -81,13 +81,31 @@ function AutoRotation() {
   return null; // Este componente não renderiza nada, apenas gerencia a navegação
 }
 
-function ProgressBar({ progress }: { progress: number }) {
+function ProgressBar() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsedTime = Date.now() - startTime;
+      const newProgress = (elapsedTime / ROTATION_INTERVAL) * 100;
+
+      if (newProgress >= 100) {
+        setProgress(0);
+      } else {
+        setProgress(newProgress);
+      }
+    }, 10);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div
       className="progress-bar"
       style={{
         width: `${progress}%`,
-        transition: "width 0.1s linear", // Suaviza a transição de progressão
+        opacity: 1,
       }}
     />
   );
@@ -96,20 +114,17 @@ function ProgressBar({ progress }: { progress: number }) {
 function PageTransition({ children }: { children: React.ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [location] = useLocation();
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     setIsTransitioning(true);
-    const timer = setTimeout(() => setIsTransitioning(false), 10000);
+    const timer = setTimeout(() => setIsTransitioning(false), 500);
     return () => clearTimeout(timer);
   }, [location]);
 
   return (
     <>
-      <ProgressBar progress={progress} />
-      <div
-        className={`page-transition ${isTransitioning ? "opacity-50" : "opacity-100"}`}
-      >
+      <ProgressBar />
+      <div className={`page-transition ${isTransitioning ? "opacity-50" : "opacity-100"}`}>
         {children}
       </div>
     </>
