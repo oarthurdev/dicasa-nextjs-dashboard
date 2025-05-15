@@ -3,10 +3,9 @@ import type { Broker } from '@shared/schema';
 
 interface BrokerRankingTableProps {
   brokers: Broker[];
-  companyId: string;
 }
 
-export function BrokerRankingTable({ brokers, companyId }: BrokerRankingTableProps) {
+export function BrokerRankingTable({ brokers }: BrokerRankingTableProps) {
   return (
     <div className="bg-card rounded-xl shadow-lg p-6 mb-8">
       <div className="flex justify-between items-center mb-6">

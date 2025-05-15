@@ -11,8 +11,7 @@ const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || "";
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Broker related queries
-export async function getBrokerRankings(companyId: string) {
-  console.log("Fetching broker rankings for company:", companyId);
+export async function getBrokerRankings() {
   const { data: brokerData, error: brokerError } = await supabase
     .from("broker_points")
     .select(
@@ -28,7 +27,6 @@ export async function getBrokerRankings(companyId: string) {
   `,
     )
     .eq("brokers.active", true)
-    .eq("brokers.company_id", companyId)
     .order("pontos", { ascending: false });
 
   if (brokerError) {
@@ -69,13 +67,12 @@ export async function getBrokerRankings(companyId: string) {
   return enrichedData;
 }
 
-export async function getBrokerById(id: number, companyId: string) {
+export async function getBrokerById(id: number) {
   const { data, error } = await supabase
     .from("brokers")
     .select("*")
     .eq("id", id)
     .eq("active", true)
-    .eq("company_id", companyId)
     .maybeSingle(); // Retorna null se não encontrar nenhum registro
 
   if (error) {

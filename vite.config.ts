@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
       outDir: "../dist", // saída para a raiz do projeto
       emptyOutDir: true,
     },
-    base: `/${process.env.VITE_COMPANY_ID || ''}/`,
+    base: "/",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "client", "src"),

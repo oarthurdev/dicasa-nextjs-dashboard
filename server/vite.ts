@@ -30,7 +30,7 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: false,
     hmr: { server },
-    allowedHosts: []
+    allowedHosts: [],
   };
 
   // Criando o servidor Vite
@@ -51,28 +51,13 @@ export async function setupVite(app: Express, server: Server) {
   // Adicionando o middleware do Vite
   app.use(vite.middlewares);
 
-  // Middleware para capturar o companyId da URL
-  app.use("/:companyId", async (req, res, next) => {
-    const { companyId } = req.params;
-    
-    console.log(companyId)
-    if (!companyId) {
-      return res.status(400).json({ error: "Company ID is required" });
-    }
-
-    // Configurar variável de ambiente para Vite
-    process.env.VITE_COMPANY_ID = companyId;
-
-    next();
-  });
-
   // Roteamento da requisição para o index.html com a aplicação frontend
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
-    const distDir = path.resolve(__dirname, '..', 'dist');
+    const distDir = path.resolve(__dirname, "..", "dist");
     try {
-      const clientTemplate = path.resolve(distDir, 'index.html');
+      const clientTemplate = path.resolve(distDir, "index.html");
 
       // Sempre recarrega o index.html do disco caso mude
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
@@ -91,14 +76,13 @@ export async function setupVite(app: Express, server: Server) {
 
 // Função para servir arquivos estáticos
 export function serveStatic(app: Express) {
-  const distDir = path.resolve(__dirname, '..', 'dist'); // Caminho correto para a pasta 'dist'
+  const distDir = path.resolve(__dirname, "..", "dist"); // Caminho correto para a pasta 'dist'
 
   // Serve os arquivos estáticos
   app.use(express.static(distDir));
 
   // Roteia todas as outras requisições para o arquivo 'index.html' de produção
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(distDir, 'index.html'));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(distDir, "index.html"));
   });
 }
-
