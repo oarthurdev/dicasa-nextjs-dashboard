@@ -124,7 +124,9 @@ function PageTransition({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ProgressBar />
-      <div className={`page-transition ${isTransitioning ? "opacity-50" : "opacity-100"}`}>
+      <div
+        className={`page-transition ${isTransitioning ? "opacity-50" : "opacity-100"}`}
+      >
         {children}
       </div>
     </>
@@ -136,14 +138,14 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="bg-background min-h-screen">
-          <PageTransition>
-            <AutoRotation />
-            <Switch>
-              <Route path="/" component={RankingPage} />
-              <Route path="/broker/:id" component={BrokerProfilePage} />
-              <Route component={NotFound} />
-            </Switch>
-          </PageTransition>
+          {/* <PageTransition> */}
+          <AutoRotation />
+          <Switch>
+            <Route path="/" component={RankingPage} />
+            <Route path="/broker/:id" component={BrokerProfilePage} />
+            <Route component={NotFound} />
+          </Switch>
+          {/* </PageTransition> */}
           <Toaster />
         </div>
       </TooltipProvider>
