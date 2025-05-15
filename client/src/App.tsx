@@ -37,7 +37,8 @@ function AutoRotation() {
   }, []);
 
   // Calcular número total de páginas (ranking + perfis dos 3 principais corretores)
-  const totalPages = 1 + (topBrokerIds && topBrokerIds.length ? topBrokerIds.length : 0);
+  const totalPages =
+    1 + (topBrokerIds && topBrokerIds.length ? topBrokerIds.length : 0);
 
   // Função para navegar para a próxima página
   const goToNextPage = useCallback(() => {
