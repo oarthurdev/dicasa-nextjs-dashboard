@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
@@ -54,10 +55,10 @@ export function BrokerProfilePage() {
 
   if (!broker || !brokerPoints || !leads) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black p-6">
         <div className="text-center py-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-gray-500">Carregando dados do corretor...</p>
+          <p className="mt-4 text-gray-400">Carregando dados do corretor...</p>
         </div>
       </div>
     );
@@ -73,24 +74,25 @@ export function BrokerProfilePage() {
     return acc;
   }, {});
 
-  const totalLeads = pipelineLeads.length;
   const funnelData = Object.entries(stageData).map(([stage, count]) => ({
     name: stage,
     value: (count as number / totalLeads) * 100,
   }));
 
+  const totalLeads = pipelineLeads.length;
+
   return (
-    <div className="min-h-screen bg-blue-600 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-8">
           <Link
             href="/"
-            className="text-white hover:text-white/90 hover:underline flex items-center"
+            className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 mb-4"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -104,15 +106,16 @@ export function BrokerProfilePage() {
             </svg>
             Voltar para Ranking
           </Link>
-          <h1 className="text-2xl font-bold text-white mt-2">
-            PAINEL DE DESEMPENHO – CORRETOR {broker.nome.toUpperCase()}
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+            Painel de Desempenho
           </h1>
+          <p className="text-xl text-gray-300 mt-2">{broker.nome}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Chart */}
-          <Card className="col-span-2 p-6 bg-white shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">Funil de Vendas</h2>
+          <Card className="col-span-2 p-6 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+            <h2 className="text-xl font-semibold mb-6 text-white">Funil de Vendas</h2>
             <div className="h-[400px]">
               <DataChart
                 title=""
@@ -120,42 +123,42 @@ export function BrokerProfilePage() {
                 data={funnelData}
                 colors={['#6366F1', '#22C55E', '#F59E0B', '#94A3B8']}
               />
-              <p className="text-center mt-4 text-gray-600">
-                Total de Leads: {totalLeads}
+              <p className="text-center mt-6 text-gray-400">
+                Total de Leads: <span className="text-white font-semibold">{totalLeads}</span>
               </p>
             </div>
           </Card>
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-2 gap-4">
-            <Card className="p-4 bg-white shadow-lg">
-              <h3 className="text-sm font-medium text-gray-500">Tempo médio de resposta</h3>
-              <p className="text-2xl font-bold">3h 45m</p>
+            <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+              <h3 className="text-sm font-medium text-gray-400">Tempo médio de resposta</h3>
+              <p className="text-2xl font-bold text-white mt-2">3h 45m</p>
             </Card>
 
-            <Card className="p-4 bg-white shadow-lg">
-              <h3 className="text-sm font-medium text-gray-500">Sem interação 24h</h3>
-              <p className="text-2xl font-bold">{brokerPoints.leads_sem_interacao_24h}</p>
+            <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+              <h3 className="text-sm font-medium text-gray-400">Sem interação 24h</h3>
+              <p className="text-2xl font-bold text-white mt-2">{brokerPoints.leads_sem_interacao_24h}</p>
             </Card>
 
-            <Card className="p-4 bg-white shadow-lg">
-              <h3 className="text-sm font-medium text-gray-500">Propostas enviadas</h3>
-              <p className="text-2xl font-bold">{brokerPoints.propostas_enviadas}</p>
+            <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+              <h3 className="text-sm font-medium text-gray-400">Propostas enviadas</h3>
+              <p className="text-2xl font-bold text-white mt-2">{brokerPoints.propostas_enviadas}</p>
             </Card>
 
-            <Card className="p-4 bg-white shadow-lg">
-              <h3 className="text-sm font-medium text-gray-500">Leads perdidos</h3>
-              <p className="text-2xl font-bold">{brokerPoints.leads_perdidos}</p>
+            <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+              <h3 className="text-sm font-medium text-gray-400">Leads perdidos</h3>
+              <p className="text-2xl font-bold text-white mt-2">{brokerPoints.leads_perdidos}</p>
             </Card>
 
-            <Card className="p-4 bg-white shadow-lg">
-              <h3 className="text-sm font-medium text-gray-500">Ticket médio</h3>
-              <p className="text-2xl font-bold">R$ 450.000</p>
+            <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+              <h3 className="text-sm font-medium text-gray-400">Ticket médio</h3>
+              <p className="text-2xl font-bold text-white mt-2">R$ 450.000</p>
             </Card>
 
-            <Card className="p-4 bg-white shadow-lg">
-              <h3 className="text-sm font-medium text-gray-500">Ranking</h3>
-              <p className="text-2xl font-bold">#{rankPosition}</p>
+            <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
+              <h3 className="text-sm font-medium text-gray-400">Ranking</h3>
+              <p className="text-2xl font-bold text-white mt-2">#{rankPosition}</p>
             </Card>
           </div>
         </div>
