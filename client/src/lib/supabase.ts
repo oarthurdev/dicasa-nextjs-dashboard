@@ -115,6 +115,23 @@ export async function getBrokerLeads(id: number) {
   return data;
 }
 
+export async function getKommoConfig(company_id: number | undefined) {
+  if (!company_id) return null;
+  
+  const { data, error } = await supabase
+    .from("kommo_config")
+    .select("*")
+    .eq("company_id", company_id)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching kommo config for company ${company_id}:`, error);
+    throw error;
+  }
+
+  return data;
+}
+
 export async function getBrokerActivities(id: number) {
   const { data, error } = await supabase
     .from("activities")
