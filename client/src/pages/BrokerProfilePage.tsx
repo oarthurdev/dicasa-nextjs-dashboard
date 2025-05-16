@@ -1,75 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
-import { MetricCard } from "@/components/dashboard/MetricCard";
-import { HeatMap } from "@/components/dashboard/HeatMap";
-import { AlertList } from "@/components/dashboard/AlertList";
-import { ConversionFunnel } from "@/components/dashboard/ConversionFunnel";
-import { PointsBreakdown } from "@/components/dashboard/PointsBreakdown";
+import { DataChart } from "@/components/dashboard/DataChart";
 import {
   getBrokerById,
   getBrokerPoints,
-  getActivityHeatmap,
-  getBrokerAlerts,
   getBrokerRankPosition,
+  getBrokerLeads,
+  getKommoConfig,
 } from "@/lib/supabase";
-
-interface BrokerPerformance {
-  monthlyData: {
-    month: string;
-    salesAmount: number;
-    propertiesSold: number;
-    points: number;
-  }[];
-  propertyTypes: {
-    type: string;
-    percentage: number;
-    count: number;
-  }[];
-}
-
-interface HeatMapData {
-  dias: string[];
-  horarios: string[];
-  dados: number[][];
-}
-
-interface BrokerAlert {
-  tipo: string;
-  mensagem: string;
-  quantidade: number;
-}
-
-interface PointCategory {
-  categoria: string;
-  quantidade: number;
-  pontos: number;
-  tipo: "Positivo" | "Negativo";
-}
+import { Card } from "@/components/ui/card";
 
 export function BrokerProfilePage() {
   const { id } = useParams<{ id: string }>();
   const brokerId = parseInt(id);
+  const [, navigate] = useLocation();
 
-  // Estado para armazenar os dados formatados para o detalhamento de pontos
-  const [pointsData, setPointsData] = useState<PointCategory[]>([]);
-  // Estado para armazenar os dados formatados para o funil de conversão
-  const [funnelData, setFunnelData] = useState<
-    { name: string; value: number; color: string }[]
-  >([]);
-
-  // Consultas para buscar os dados do corretor usando Supabase diretamente
-  const {
-    data: broker,
-    isLoading: isLoadingBroker,
-    error,
-  } = useQuery({
+  const { data: broker, error } = useQuery({
     queryKey: ["broker", brokerId],
     queryFn: () => getBrokerById(brokerId),
     enabled: !!brokerId && !isNaN(brokerId),
   });
 
-  const [, navigate] = useLocation();
+  const { data: brokerPoints } = useQuery({
+    queryKey: ["brokerPoints", brokerId],
+    queryFn: () => getBrokerPoints(brokerId),
+    enabled: !!brokerId && !isNaN(brokerId),
+  });
+
+  const { data: rankPosition } = useQuery<number>({
+    queryKey: ["brokerRankPosition", brokerId],
+    queryFn: () => getBrokerRankPosition(brokerId),
+    enabled: !!brokerId && !isNaN(brokerId),
+  });
+
+  const { data: leads } = useQuery({
+    queryKey: ["brokerLeads", brokerId],
+    queryFn: () => getBrokerLeads(brokerId),
+    enabled: !!brokerId && !isNaN(brokerId),
+  });
+
+  const { data: kommoConfig } = useQuery({
+    queryKey: ["kommoConfig", broker?.company_id],
+    queryFn: () => getKommoConfig(broker?.company_id),
+    enabled: !!broker?.company_id,
+  });
 
   useEffect(() => {
     if (error?.message === "Corretor inativo ou não encontrado") {
@@ -77,180 +52,9 @@ export function BrokerProfilePage() {
     }
   }, [error, navigate]);
 
-  const { data: brokerPoints, isLoading: isLoadingPoints } = useQuery({
-    queryKey: ["brokerPoints", brokerId],
-    queryFn: () => getBrokerPoints(brokerId),
-    enabled: !!brokerId && !isNaN(brokerId),
-  });
-
-  if (error) return null;
-
-  const { data: heatmapData, isLoading: isLoadingHeatmap } =
-    useQuery<HeatMapData>({
-      queryKey: ["brokerHeatmap", brokerId],
-      queryFn: () => getActivityHeatmap(brokerId),
-      enabled: !!brokerId && !isNaN(brokerId),
-    });
-
-  const { data: alerts, isLoading: isLoadingAlerts } = useQuery<BrokerAlert[]>({
-    queryKey: ["brokerAlerts", brokerId],
-    queryFn: () => getBrokerAlerts(brokerId),
-    enabled: !!brokerId && !isNaN(brokerId),
-  });
-
-  // Consulta para buscar a posição do broker no ranking
-  const { data: rankPosition, isLoading: isLoadingRankPosition } =
-    useQuery<number>({
-      queryKey: ["brokerRankPosition", brokerId],
-      queryFn: () => getBrokerRankPosition(brokerId),
-      enabled: !!brokerId && !isNaN(brokerId),
-    });
-
-  // Efeito para processar os dados de pontuação para o componente PointsBreakdown
-  useEffect(() => {
-    if (brokerPoints) {
-      const points: PointCategory[] = [];
-
-      // Regras positivas
-      if (brokerPoints.leads_respondidos_1h > 0) {
-        points.push({
-          categoria: "Leads respondidos em 1 hora",
-          quantidade: brokerPoints.leads_respondidos_1h,
-          pontos: brokerPoints.leads_respondidos_1h * 2,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.leads_visitados > 0) {
-        points.push({
-          categoria: "Leads visitados",
-          quantidade: brokerPoints.leads_visitados,
-          pontos: brokerPoints.leads_visitados * 5,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.propostas_enviadas > 0) {
-        points.push({
-          categoria: "Propostas enviadas",
-          quantidade: brokerPoints.propostas_enviadas,
-          pontos: brokerPoints.propostas_enviadas * 8,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.vendas_realizadas > 0) {
-        points.push({
-          categoria: "Vendas realizadas",
-          quantidade: brokerPoints.vendas_realizadas,
-          pontos: brokerPoints.vendas_realizadas * 15,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.leads_atualizados_mesmo_dia > 0) {
-        points.push({
-          categoria: "Leads atualizados no mesmo dia",
-          quantidade: brokerPoints.leads_atualizados_mesmo_dia,
-          pontos: brokerPoints.leads_atualizados_mesmo_dia * 2,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.feedbacks_positivos > 0) {
-        points.push({
-          categoria: "Feedbacks positivos",
-          quantidade: brokerPoints.feedbacks_positivos,
-          pontos: brokerPoints.feedbacks_positivos * 3,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.resposta_rapida_3h > 0) {
-        points.push({
-          categoria: "Resposta rápida (3h)",
-          quantidade: brokerPoints.resposta_rapida_3h,
-          pontos: brokerPoints.resposta_rapida_3h * 4,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.todos_leads_respondidos > 0) {
-        points.push({
-          categoria: "Todos leads respondidos",
-          quantidade: brokerPoints.todos_leads_respondidos,
-          pontos: brokerPoints.todos_leads_respondidos * 5,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.cadastro_completo > 0) {
-        points.push({
-          categoria: "Cadastro completo",
-          quantidade: brokerPoints.cadastro_completo,
-          pontos: brokerPoints.cadastro_completo * 3,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.acompanhamento_pos_venda > 0) {
-        points.push({
-          categoria: "Acompanhamento pós-venda",
-          quantidade: brokerPoints.acompanhamento_pos_venda,
-          pontos: brokerPoints.acompanhamento_pos_venda * 10,
-          tipo: "Positivo",
-        });
-      }
-
-      if (brokerPoints.leads_perdidos > 0) {
-        points.push({
-          categoria: "Leads perdidos",
-          quantidade: brokerPoints.leads_perdidos,
-          pontos: brokerPoints.leads_perdidos * -1,
-          tipo: "Negativo",
-        });
-      }
-
-      // Set the processed points data
-      setPointsData(points);
-
-      // Criar dados do funil de conversão
-      setFunnelData([
-        {
-          name: "Leads Respondidos em 1h",
-          value: brokerPoints.leads_respondidos_1h || 0,
-          color: "#3B82F6", // azul
-        },
-        {
-          name: "Leads Visitados",
-          value: brokerPoints.leads_visitados || 0,
-          color: "#10B981", // verde
-        },
-        {
-          name: "Propostas Enviadas",
-          value: brokerPoints.propostas_enviadas || 0,
-          color: "#F59E0B", // amarelo
-        },
-        {
-          name: "Vendas Realizadas",
-          value: brokerPoints.vendas_realizadas || 0,
-          color: "#8B5CF6", // roxo
-        },
-      ]);
-    }
-  }, [brokerPoints]);
-
-  // Verificar se está carregando
-  const isLoading =
-    isLoadingBroker ||
-    isLoadingPoints ||
-    isLoadingHeatmap ||
-    isLoadingAlerts ||
-    isLoadingRankPosition;
-
-  if (isLoading) {
+  if (!broker || !brokerPoints || !leads) {
     return (
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6">
         <div className="text-center py-10">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-500">Carregando dados do corretor...</p>
@@ -259,14 +63,30 @@ export function BrokerProfilePage() {
     );
   }
 
+  // Process leads data for funnel chart
+  const pipelineLeads = leads.filter(
+    (lead) => lead.pipeline_id === kommoConfig?.pipeline_id
+  );
+
+  const stageData = pipelineLeads.reduce((acc, lead) => {
+    acc[lead.etapa] = (acc[lead.etapa] || 0) + 1;
+    return acc;
+  }, {});
+
+  const totalLeads = pipelineLeads.length;
+  const funnelData = Object.entries(stageData).map(([stage, count]) => ({
+    name: stage,
+    value: (count as number / totalLeads) * 100,
+  }));
+
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      {/* Cabeçalho com navegação */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
+    <div className="min-h-screen bg-blue-600 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
           <Link
-            href={`/`}
-            className="text-primary hover:text-primary/90 hover:underline flex items-center"
+            href="/"
+            className="text-white hover:text-white/90 hover:underline flex items-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -284,53 +104,60 @@ export function BrokerProfilePage() {
             </svg>
             Voltar para Ranking
           </Link>
-
-          <h1 className="text-2xl font-bold text-foreground mt-2">
-            {broker.nome}
+          <h1 className="text-2xl font-bold text-white mt-2">
+            PAINEL DE DESEMPENHO – CORRETOR {broker.nome.toUpperCase()}
           </h1>
-          <div className="flex items-center mt-1">
-            <span className="text-muted-foreground text-sm">Ranking</span>
-            <span className="mx-2 font-bold text-primary">#{rankPosition}</span>
-            <span className="text-muted-foreground text-sm">Pontuação</span>
-            <span
-              className={`mx-2 font-bold ${(brokerPoints.pontos ?? 0) >= 0 ? "text-secondary" : "text-destructive"}`}
-            >
-              {brokerPoints.pontos ?? 0}
-            </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Chart */}
+          <Card className="col-span-2 p-6 bg-white shadow-xl">
+            <h2 className="text-xl font-semibold mb-4">Funil de Vendas</h2>
+            <div className="h-[400px]">
+              <DataChart
+                title=""
+                type="horizontalBar"
+                data={funnelData}
+                colors={['#6366F1', '#22C55E', '#F59E0B', '#94A3B8']}
+              />
+              <p className="text-center mt-4 text-gray-600">
+                Total de Leads: {totalLeads}
+              </p>
+            </div>
+          </Card>
+
+          {/* Metrics Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <Card className="p-4 bg-white shadow-lg">
+              <h3 className="text-sm font-medium text-gray-500">Tempo médio de resposta</h3>
+              <p className="text-2xl font-bold">3h 45m</p>
+            </Card>
+
+            <Card className="p-4 bg-white shadow-lg">
+              <h3 className="text-sm font-medium text-gray-500">Sem interação 24h</h3>
+              <p className="text-2xl font-bold">{brokerPoints.leads_sem_interacao_24h}</p>
+            </Card>
+
+            <Card className="p-4 bg-white shadow-lg">
+              <h3 className="text-sm font-medium text-gray-500">Propostas enviadas</h3>
+              <p className="text-2xl font-bold">{brokerPoints.propostas_enviadas}</p>
+            </Card>
+
+            <Card className="p-4 bg-white shadow-lg">
+              <h3 className="text-sm font-medium text-gray-500">Leads perdidos</h3>
+              <p className="text-2xl font-bold">{brokerPoints.leads_perdidos}</p>
+            </Card>
+
+            <Card className="p-4 bg-white shadow-lg">
+              <h3 className="text-sm font-medium text-gray-500">Ticket médio</h3>
+              <p className="text-2xl font-bold">R$ 450.000</p>
+            </Card>
+
+            <Card className="p-4 bg-white shadow-lg">
+              <h3 className="text-sm font-medium text-gray-500">Ranking</h3>
+              <p className="text-2xl font-bold">#{rankPosition}</p>
+            </Card>
           </div>
-        </div>
-      </div>
-
-      {/* Métricas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <MetricCard
-          title="Leads Respondidos em 1h"
-          value={brokerPoints.leads_respondidos_1h || 0}
-        />
-        <MetricCard
-          title="Leads Visitados"
-          De
-          value={brokerPoints.leads_visitados || 0}
-        />
-        <MetricCard
-          title="Propostas Enviadas"
-          value={brokerPoints.propostas_enviadas || 0}
-        />
-        <MetricCard
-          title="Vendas Realizadas"
-          value={brokerPoints.vendas_realizadas || 0}
-        />
-      </div>
-
-      {/* Funnel, Alerts, Heatmap e Detalhamento de Pontos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-6">
-          <ConversionFunnel stages={funnelData} />
-          {pointsData.length > 0 && <PointsBreakdown data={pointsData} />}
-        </div>
-        <div className="space-y-6">
-          {heatmapData && <HeatMap data={heatmapData} />}
-          {alerts && <AlertList alerts={alerts} />}
         </div>
       </div>
     </div>
