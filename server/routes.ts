@@ -143,14 +143,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Rota para obter métricas do dashboard
   app.get("/api/dashboard/metrics", async (req, res) => {
+    const companyId = req.query.companyId as string;
+
+    if (!companyId) {
+      return res
+        .status(400)
+        .json({ message: "Parâmetro 'companyId' é obrigatório." });
+    }
+
     try {
-      // Fetch total leads only from active brokers with "Corretor" role
       const [totalLeads, activeBrokers, maxPoints, totalSales] =
         await Promise.all([
-          supabaseServer.getTotalLeads(), // This now uses the updated function that filters by broker role
-          supabaseServer.getActiveBrokers(),
-          supabaseServer.getMaxPoints(),
-          supabaseServer.getTotalSales(),
+          supabaseServer.getTotalLeads(companyId),
+          supabaseServer.getActiveBrokers(companyId),
+          supabaseServer.getMaxPoints(companyId),
+          supabaseServer.getTotalSales(companyId),
         ]);
 
       res.json({

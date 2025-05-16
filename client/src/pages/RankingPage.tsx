@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { BrokerCard } from "@/components/dashboard/BrokerCard";
 import { MetricSummaryCards } from "@/components/dashboard/MetricSummaryCards";
-import { getBrokerRankings, getDashboardMetrics } from "@/lib/api";
+import { getDashboardMetrics } from "@/lib/api";
 import { Medal } from "lucide-react";
-import { ProgressBar } from "@/components/dashboard/ProgressBar";
+import { useBrokerRankings } from "@/hooks/useBrokerRankings";
+import { useQuery } from "@tanstack/react-query";
 
 export function RankingPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [topBrokerIds, setTopBrokerIds] = useState<number[]>([]);
   const [resetProgress, setResetProgress] = useState(0);
 
-  const { data: brokers, isLoading: isLoadingBrokers } = useQuery({
-    queryKey: ["brokerRankings"],
-    queryFn: getBrokerRankings,
-  });
+  const { data: brokers, isLoading: isLoadingBrokers } = useBrokerRankings();
 
   const { data: metrics, isLoading: isLoadingMetrics } = useQuery({
-    queryKey: ["dashboardMetrics"],
-    queryFn: getDashboardMetrics,
+    queryKey: ["dashboardMetrics", companyId],
+    queryFn: () => getDashboardMetrics(companyId || ""),
+    enabled: !!companyId,
   });
 
   useEffect(() => {

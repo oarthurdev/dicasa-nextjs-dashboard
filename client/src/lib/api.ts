@@ -1,43 +1,46 @@
-
-import { apiRequest } from './queryClient';
+import { apiRequest } from "./queryClient";
 
 export async function getBrokerRankings() {
-  return apiRequest('/api/brokers/rankings', 'GET');
+  return apiRequest("/api/brokers/rankings", "GET");
 }
 
 export async function getBrokerById(id: number) {
-  return apiRequest(`/api/brokers/${id}`, 'GET');
+  return apiRequest(`/api/brokers/${id}`, "GET");
 }
 
 export async function getBrokerRankPosition(id: number) {
-  const response = await apiRequest<{ position: number }>(`/api/brokers/${id}/rank-position`, 'GET');
+  const response = await apiRequest<{ position: number }>(
+    `/api/brokers/${id}/rank-position`,
+    "GET",
+  );
   return response.position;
 }
 
 export async function getBrokerPoints(id: number) {
-  return apiRequest(`/api/brokers/${id}/points`, 'GET');
+  return apiRequest(`/api/brokers/${id}/points`, "GET");
 }
 
 export async function getBrokerLeads(id: number) {
-  return apiRequest(`/api/brokers/${id}/leads`, 'GET');
+  return apiRequest(`/api/brokers/${id}/leads`, "GET");
 }
 
 export async function getBrokerActivities(id: number) {
-  return apiRequest(`/api/brokers/${id}/activities`, 'GET');
+  return apiRequest(`/api/brokers/${id}/activities`, "GET");
 }
 
 export async function getBrokerPerformance(brokerId: number) {
-  return apiRequest(`/api/brokers/${brokerId}/performance`, 'GET');
+  return apiRequest(`/api/brokers/${brokerId}/performance`, "GET");
 }
 
 export async function getActivityHeatmap(brokerId: number) {
-  return apiRequest(`/api/brokers/${brokerId}/heatmap`, 'GET');
+  return apiRequest(`/api/brokers/${brokerId}/heatmap`, "GET");
 }
 
 export async function getBrokerAlerts(brokerId: number) {
-  return apiRequest(`/api/brokers/${brokerId}/alerts`, 'GET');
+  return apiRequest(`/api/brokers/${brokerId}/alerts`, "GET");
 }
 
-export async function getDashboardMetrics() {
-  return apiRequest('/api/dashboard/metrics', 'GET');
+export async function getDashboardMetrics(companyId?: string) {
+  const query = companyId ? `?companyId=${companyId}` : "";
+  return apiRequest(`/api/dashboard/metrics${query}`, "GET");
 }

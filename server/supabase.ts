@@ -291,15 +291,14 @@ export async function getBrokerPerformance(brokerId: number) {
   }
 }
 
-// Funções para obter métricas gerais do dashboard
-export async function getTotalLeads() {
+export async function getTotalLeads(companyId: string) {
   try {
-    // Buscar leads apenas de corretores ativos
     const { data, error } = await supabase
       .from("leads")
-      .select("id, brokers!inner(*)")
+      .select("id, brokers!inner(company_id, cargo, active)")
       .eq("brokers.cargo", "Corretor")
-      .eq("brokers.active", true);
+      .eq("brokers.active", true)
+      .eq("brokers.company_id", companyId);
 
     if (error) throw error;
 
@@ -310,14 +309,14 @@ export async function getTotalLeads() {
   }
 }
 
-export async function getActiveBrokers() {
+export async function getActiveBrokers(companyId: string) {
   try {
-    // Consultar todos os corretores ativos
     const { data, error } = await supabase
       .from("brokers")
       .select("id")
       .eq("cargo", "Corretor")
-      .eq("active", true);
+      .eq("active", true)
+      .eq("company_id", companyId);
 
     if (error) throw error;
 
@@ -328,11 +327,12 @@ export async function getActiveBrokers() {
   }
 }
 
-export async function getMaxPoints() {
+export async function getMaxPoints(companyId: string) {
   try {
     const { data, error } = await supabase
       .from("broker_points")
-      .select("pontos")
+      .select("pontos, brokers!inner(company_id)")
+      .eq("brokers.company_id", companyId)
       .order("pontos", { ascending: false })
       .limit(1)
       .single();
@@ -346,13 +346,14 @@ export async function getMaxPoints() {
   }
 }
 
-export async function getTotalSales() {
+export async function getTotalSales(companyId: string) {
   try {
     const { data, error } = await supabase
       .from("broker_points")
-      .select("vendas_realizadas, brokers!inner(id, cargo, active)")
+      .select("vendas_realizadas, brokers!inner(company_id, cargo, active)")
       .eq("brokers.cargo", "Corretor")
-      .eq("brokers.active", true);
+      .eq("brokers.active", true)
+      .eq("brokers.company_id", companyId);
 
     if (error) throw error;
 

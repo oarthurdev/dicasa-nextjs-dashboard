@@ -5,15 +5,13 @@ import { type Server } from "http";
 import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
 
-const viteLogger = createLogger();
-
 import { fileURLToPath } from "url";
 import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const viteLogger = createLogger();
 
-// Função de log
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -25,7 +23,7 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
-// Função para configurar o Vite no Express
+// Função para configurar o Vite no modo dev
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: false,
@@ -33,7 +31,6 @@ export async function setupVite(app: Express, server: Server) {
     allowedHosts: [],
   };
 
-  // Criando o servidor Vite
   const vite = await createViteServer({
     ...viteConfig,
     configFile: false,
@@ -48,23 +45,23 @@ export async function setupVite(app: Express, server: Server) {
     appType: "custom",
   });
 
-  // Adicionando o middleware do Vite
   app.use(vite.middlewares);
 
-  // Roteamento da requisição para o index.html com a aplicação frontend
-  app.use("*", async (req, res, next) => {
+  // Captura requests com base dinâmica (UUID)
+  app.use("/:uuid/*", async (req, res, next) => {
     const url = req.originalUrl;
-
     const distDir = path.resolve(__dirname, "..", "dist");
+
     try {
       const clientTemplate = path.resolve(distDir, "index.html");
-
-      // Sempre recarrega o index.html do disco caso mude
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
+
+      // Corrige o caminho para o script principal, adicionando um hash para forçar reload em dev
       template = template.replace(
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`,
       );
+
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
@@ -74,15 +71,15 @@ export async function setupVite(app: Express, server: Server) {
   });
 }
 
-// Função para servir arquivos estáticos
+// Função para servir arquivos estáticos em produção
 export function serveStatic(app: Express) {
-  const distDir = path.resolve(__dirname, "..", "dist"); // Caminho correto para a pasta 'dist'
+  const distDir = path.resolve(__dirname, "..", "dist");
 
-  // Serve os arquivos estáticos
+  // Serve os arquivos estáticos normalmente
   app.use(express.static(distDir));
 
-  // Roteia todas as outras requisições para o arquivo 'index.html' de produção
-  app.get("*", (req, res) => {
+  // Serve a SPA para qualquer rota /:uuid/*
+  app.get("/:uuid/*", (req, res) => {
     res.sendFile(path.resolve(distDir, "index.html"));
   });
 }

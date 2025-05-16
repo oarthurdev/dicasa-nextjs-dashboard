@@ -1,8 +1,7 @@
-
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
-import { DataChart } from "@/components/dashboard/DataChart";
+import { FunnelBar } from "@/components/ui/FunnelBar";
 import {
   getBrokerById,
   getBrokerPoints,
@@ -66,8 +65,10 @@ export function BrokerProfilePage() {
 
   // Process leads data for funnel chart
   const pipelineLeads = leads.filter(
-    (lead) => lead.pipeline_id === kommoConfig?.pipeline_id
+    (lead) => lead.pipeline_id === kommoConfig?.pipeline_id,
   );
+
+  const totalLeads = pipelineLeads.length;
 
   const stageData = pipelineLeads.reduce((acc, lead) => {
     acc[lead.etapa] = (acc[lead.etapa] || 0) + 1;
@@ -76,10 +77,8 @@ export function BrokerProfilePage() {
 
   const funnelData = Object.entries(stageData).map(([stage, count]) => ({
     name: stage,
-    value: (count as number / totalLeads) * 100,
+    value: (count / totalLeads) * 100,
   }));
-
-  const totalLeads = pipelineLeads.length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -115,50 +114,62 @@ export function BrokerProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Chart */}
           <Card className="col-span-2 p-6 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-            <h2 className="text-xl font-semibold mb-6 text-white">Funil de Vendas</h2>
+            <h2 className="text-xl font-semibold mb-6 text-white">
+              Funil de Vendas
+            </h2>
             <div className="h-[400px]">
-              <DataChart
-                title=""
-                type="horizontalBar"
-                data={funnelData}
-                colors={['#6366F1', '#22C55E', '#F59E0B', '#94A3B8']}
-              />
-              <p className="text-center mt-6 text-gray-400">
-                Total de Leads: <span className="text-white font-semibold">{totalLeads}</span>
-              </p>
+              <FunnelBar totalLeads={totalLeads} stages={funnelData} />
             </div>
           </Card>
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-2 gap-4">
             <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-              <h3 className="text-sm font-medium text-gray-400">Tempo médio de resposta</h3>
+              <h3 className="text-sm font-medium text-gray-400">
+                Tempo médio de resposta
+              </h3>
               <p className="text-2xl font-bold text-white mt-2">3h 45m</p>
             </Card>
 
             <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-              <h3 className="text-sm font-medium text-gray-400">Sem interação 24h</h3>
-              <p className="text-2xl font-bold text-white mt-2">{brokerPoints.leads_sem_interacao_24h}</p>
+              <h3 className="text-sm font-medium text-gray-400">
+                Sem interação 24h
+              </h3>
+              <p className="text-2xl font-bold text-white mt-2">
+                {brokerPoints.leads_sem_interacao_24h}
+              </p>
             </Card>
 
             <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-              <h3 className="text-sm font-medium text-gray-400">Propostas enviadas</h3>
-              <p className="text-2xl font-bold text-white mt-2">{brokerPoints.propostas_enviadas}</p>
+              <h3 className="text-sm font-medium text-gray-400">
+                Propostas enviadas
+              </h3>
+              <p className="text-2xl font-bold text-white mt-2">
+                {brokerPoints.propostas_enviadas}
+              </p>
             </Card>
 
             <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-              <h3 className="text-sm font-medium text-gray-400">Leads perdidos</h3>
-              <p className="text-2xl font-bold text-white mt-2">{brokerPoints.leads_perdidos}</p>
+              <h3 className="text-sm font-medium text-gray-400">
+                Leads perdidos
+              </h3>
+              <p className="text-2xl font-bold text-white mt-2">
+                {brokerPoints.leads_perdidos}
+              </p>
             </Card>
 
             <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
-              <h3 className="text-sm font-medium text-gray-400">Ticket médio</h3>
+              <h3 className="text-sm font-medium text-gray-400">
+                Ticket médio
+              </h3>
               <p className="text-2xl font-bold text-white mt-2">R$ 450.000</p>
             </Card>
 
             <Card className="p-4 bg-gray-800/50 backdrop-blur-sm border-gray-700">
               <h3 className="text-sm font-medium text-gray-400">Ranking</h3>
-              <p className="text-2xl font-bold text-white mt-2">#{rankPosition}</p>
+              <p className="text-2xl font-bold text-white mt-2">
+                #{rankPosition}
+              </p>
             </Card>
           </div>
         </div>
